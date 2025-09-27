@@ -27,8 +27,8 @@ const AndroidJWTBindings = {
     // In a real implementation, this would call the actual proof generation
     try {
       const { MoproModule } = NativeModules;
-      if (MoproModule && MoproModule.moproUniffiHelloWorld) {
-        const greeting = await MoproModule.moproUniffiHelloWorld();
+      if (MoproModule && MoproModule.moproUniffiNymph) {
+        const greeting = await MoproModule.moproUniffiNymph();
         console.log('Mopro greeting:', greeting);
         
         // Generate a deterministic proof based on input
@@ -69,8 +69,8 @@ const AndroidJWTBindings = {
   helloWorld: async () => {
     try {
       const { MoproModule } = NativeModules;
-      if (MoproModule && MoproModule.moproUniffiHelloWorld) {
-        const greeting = await MoproModule.moproUniffiHelloWorld();
+      if (MoproModule && MoproModule.moproUniffiNymph) {
+        const greeting = await MoproModule.moproUniffiNymph();
         return `Android: ${greeting}`;
       }
       return 'Android: Mopro module not available';

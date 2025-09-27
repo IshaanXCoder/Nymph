@@ -8,8 +8,9 @@ export type ClerkDomainInfo = {
 };
 
 export function extractDomainFromEmail(email: string): string {
-  const parts = email.split('@');
-  return parts.length === 2 ? parts[1] : '';
+  const { extractDomainFromJWTEmail } = require('../domain-extraction');
+  const result = extractDomainFromJWTEmail(email);
+  return result.isValid ? result.domain : '';
 }
 
 export async function signInWithProvider(provider: 'oauth_google' | 'oauth_microsoft') {

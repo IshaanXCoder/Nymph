@@ -1,6 +1,8 @@
 import { AnonGroupProvider, AnonGroup, EphemeralKey } from '../../types';
 import { Storage } from '../storage';
 import { JWTCircuitService } from '../circuits/jwt';
+import { extractDomainWithCircuitIntegration, createCircuitDomainBytes, createStealthNoteCircuitInput } from '../domain-extraction';
+import { StealthNoteMoproService } from '../stealthnote-mopro';
 import { StorageKeys } from '../../types';
 import { OAuthConfig } from '../../config/oauth';
 import { Platform } from 'react-native';
@@ -429,68 +431,25 @@ export class GoogleOAuthProvider implements AnonGroupProvider {
     }
   }
 
-  /**
-   * Create JWT Circuit Input from JWT token and ephemeral key
-   */
   private createJWTCircuitInput(
     jwtToken: string,
     domain: string,
     ephemeralKey: EphemeralKey
   ): any {
     try {
-      // Split JWT token into header.payload.signature
-      const parts = jwtToken.split('.');
-      if (parts.length !== 3) {
-        throw new Error('Invalid JWT token format');
-      }
-
-      const [header, payload, signature] = parts;
-      const headerPayload = `${header}.${payload}`;
-      
-      // Convert strings to byte arrays
-      const partialData = new Array(640).fill(0);
-      const headerPayloadBytes = Array.from(new TextEncoder().encode(headerPayload));
-      
-      // Copy header.payload bytes to partial_data (truncate if too long)
-      const maxLength = Math.min(headerPayloadBytes.length, 640);
-      for (let i = 0; i < maxLength; i++) {
-        partialData[i] = headerPayloadBytes[i];
-      }
-
-      // Create domain byte array
-      const domainBytes = new Array(64).fill(0);
-      const domainByteArray = Array.from(new TextEncoder().encode(domain));
-      const maxDomainLength = Math.min(domainByteArray.length, 64);
-      for (let i = 0; i < maxDomainLength; i++) {
-        domainBytes[i] = domainByteArray[i];
-      }
-
-      // Create mock RSA parameters (in real implementation, these would come from Google's public keys)
-      const mockRSALimbs = new Array(18).fill(1);
-
-      // Create circuit input matching the Noir circuit structure
-      return {
-        partialData,
-        partialHash: [1, 2, 3, 4, 5, 6, 7, 8], // Mock hash
-        fullDataLength: headerPayloadBytes.length,
-        base64DecodeOffset: 0,
-        jwtPubkeyModulusLimbs: mockRSALimbs,
-        jwtPubkeyRedcParamsLimbs: mockRSALimbs,
-        jwtSignatureLimbs: mockRSALimbs,
-        domain: domainBytes,
-        ephemeralPubkey: ephemeralKey.publicKey,
-        ephemeralPubkeySalt: ephemeralKey.salt,
-        ephemeralPubkeyExpiry: Math.floor(ephemeralKey.expiry.getTime() / 1000)
-      };
+      return createStealthNoteCircuitInput(
+        jwtToken,
+        ephemeralKey.publicKey,
+        ephemeralKey.salt,
+        Math.floor(ephemeralKey.expiry.getTime() / 1000),
+        domain
+      );
     } catch (error) {
       console.error('Failed to create JWT circuit input:', error);
-      throw new Error(`Failed to create circuit input: ${error.message}`);
+      throw new Error(`Failed to create circuit input: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  /**
-   * Parse JWT token to extract domain and other claims
-   */
   private parseJWT(token: string): any {
     try {
       const base64Url = token.split('.')[1];
@@ -508,16 +467,13 @@ export class GoogleOAuthProvider implements AnonGroupProvider {
     }
   }
 
-  /**
-   * Generate ZK proof of Google Workspace membership
-   */
   async generateProof(ephemeralKey: EphemeralKey): Promise<{
     proof: string;
     anonGroup: AnonGroup;
     proofArgs: object;
   }> {
     try {
-      console.log('🔒 Generating ZK proof...');
+      console.log('🔒 Generating ZK proof with StealthNote-Mopro integration...');
       
       // Get stored JWT token
       const jwtToken = await Storage.getItem(StorageKeys.GoogleOAuthState);
@@ -525,46 +481,25 @@ export class GoogleOAuthProvider implements AnonGroupProvider {
         throw new Error('No Google JWT token found. Please authenticate first.');
       }
 
-      // Parse JWT to get domain and prepare circuit input
-      const jwtPayload = this.parseJWT(jwtToken);
-      const domain = jwtPayload.hd || (jwtPayload.email ? jwtPayload.email.split('@')[1] : 'example.com');
-      
-      console.log('🏢 Domain:', domain);
-      console.log('📧 Email:', jwtPayload.email);
-      console.log('🔑 Ephemeral Key:', ephemeralKey.publicKey);
+      const stealthNoteUser = await StealthNoteMoproService.registerWithStealthNote(jwtToken, 'google');
 
-      // Create real circuit input from JWT token
-      const circuitInput = this.createJWTCircuitInput(
-        jwtToken,
-        domain,
-        ephemeralKey
-      );
-
-      console.log('🔧 Circuit input prepared:', {
-        domain: circuitInput.domain.length,
-        partialDataLength: circuitInput.partialData.length,
-        ephemeralPubkey: circuitInput.ephemeralPubkey
+      console.log('✅ StealthNote registration completed:', {
+        domain: stealthNoteUser.domain,
+        ephemeralPubkey: stealthNoteUser.ephemeralKey.publicKey,
+        proofGenerated: !!stealthNoteUser.proof.proof
       });
 
-      // Generate ZK proof using the JWT circuit
-      const proofResult = await JWTCircuitService.generateJWTProof(circuitInput);
-      
-      if (!proofResult.success || !proofResult.proof) {
-        throw new Error(`Failed to generate proof: ${proofResult.error}`);
-      }
-
-      console.log('✅ ZK proof generated:', proofResult.proof.substring(0, 50) + '...');
-
-      const anonGroup = this.getAnonGroup(domain);
-      console.log('✅ ZK proof generated successfully');
+      const anonGroup = this.getAnonGroup(stealthNoteUser.domain);
 
       return {
-        proof: proofResult.proof,
+        proof: stealthNoteUser.proof.proof,
         anonGroup,
         proofArgs: {
-          domain,
-          email: jwtPayload.email,
-          issuer: jwtPayload.iss
+          domain: stealthNoteUser.domain,
+          ephemeralPubkey: stealthNoteUser.ephemeralKey.publicKey,
+          timestamp: stealthNoteUser.proof.timestamp,
+          expiryTimestamp: stealthNoteUser.proof.expiryTimestamp,
+          stealthNoteUser: stealthNoteUser
         }
       };
     } catch (error) {
@@ -573,9 +508,6 @@ export class GoogleOAuthProvider implements AnonGroupProvider {
     }
   }
 
-  /**
-   * Verify ZK proof of Google Workspace membership
-   */
   async verifyProof(
     proof: string,
     anonGroupId: string,
@@ -584,7 +516,7 @@ export class GoogleOAuthProvider implements AnonGroupProvider {
     proofArgs: any
   ): Promise<boolean> {
     try {
-      console.log('🔍 Verifying Google OAuth proof:', {
+      console.log('🔍 Verifying Google OAuth proof with StealthNote-Mopro:', {
         proof: proof.substring(0, 50) + '...',
         anonGroupId,
         ephemeralPubkey,
@@ -592,9 +524,28 @@ export class GoogleOAuthProvider implements AnonGroupProvider {
         proofArgs
       });
 
-      // Use JWT circuit service for verification
+      if (proofArgs.stealthNoteUser) {
+        const stealthNoteProof = {
+          proof,
+          ephemeralPubkey,
+          domain: anonGroupId,
+          timestamp: proofArgs.timestamp,
+          expiryTimestamp: proofArgs.expiryTimestamp
+        };
+
+        const isValid = await StealthNoteMoproService.verifyMoproProof(proof);
+        console.log('✅ StealthNote-Mopro verification result:', isValid);
+        
+        if (isValid && proofArgs.domain !== anonGroupId) {
+          console.error('❌ Domain mismatch in proof args');
+          return false;
+        }
+        
+        return isValid;
+      }
+
       const verificationResult = await JWTCircuitService.verifyJWTProof(
-        'stealthnote_jwt.json', // Circuit path
+        'stealthnote_jwt.json',
         proof
       );
 
@@ -603,14 +554,10 @@ export class GoogleOAuthProvider implements AnonGroupProvider {
         return false;
       }
 
-      console.log('✅ Proof verification result:', verificationResult.valid);
-      
-      // Additional checks
       if (!verificationResult.valid) {
         return false;
       }
 
-      // Verify proof arguments match expected values
       if (proofArgs.domain !== anonGroupId) {
         console.error('❌ Domain mismatch in proof args');
         return false;

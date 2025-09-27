@@ -1,10 +1,7 @@
 import { JWTCircuitService } from './jwt';
 import { EphemeralKey } from '../../types';
+import { createStealthNoteCircuitInput } from '../domain-extraction';
 
-/**
- * Test script to verify JWT circuit integration
- * This can be called from the app to test the circuit functionality
- */
 export class JWTCircuitTestSuite {
   
   /**
@@ -127,6 +124,7 @@ export class JWTCircuitTestSuite {
   
   /**
    * Create circuit input from JWT token (similar to OAuth providers)
+   * Uses the exact StealthNote implementation
    */
   private static createJWTCircuitInput(
     jwtToken: string,
@@ -134,48 +132,15 @@ export class JWTCircuitTestSuite {
     ephemeralKey: EphemeralKey
   ): any {
     try {
-      const parts = jwtToken.split('.');
-      if (parts.length !== 3) {
-        throw new Error('Invalid JWT token format');
-      }
-      
-      const [header, payload, signature] = parts;
-      const headerPayload = `${header}.${payload}`;
-      
-      // Convert to byte arrays
-      const partialData = new Array(640).fill(0);
-      const headerPayloadBytes = Array.from(new TextEncoder().encode(headerPayload));
-      
-      // Copy data (truncate if too long)
-      const maxLength = Math.min(headerPayloadBytes.length, 640);
-      for (let i = 0; i < maxLength; i++) {
-        partialData[i] = headerPayloadBytes[i];
-      }
-      
-      // Domain bytes
-      const domainBytes = new Array(64).fill(0);
-      const domainByteArray = Array.from(new TextEncoder().encode(domain));
-      const maxDomainLength = Math.min(domainByteArray.length, 64);
-      for (let i = 0; i < maxDomainLength; i++) {
-        domainBytes[i] = domainByteArray[i];
-      }
-      
-      // Mock RSA parameters
-      const mockRSALimbs = new Array(18).fill(1);
-      
-      return {
-        partialData,
-        partialHash: [1, 2, 3, 4, 5, 6, 7, 8],
-        fullDataLength: headerPayloadBytes.length,
-        base64DecodeOffset: 0,
-        jwtPubkeyModulusLimbs: mockRSALimbs,
-        jwtPubkeyRedcParamsLimbs: mockRSALimbs,
-        jwtSignatureLimbs: mockRSALimbs,
-        domain: domainBytes,
-        ephemeralPubkey: ephemeralKey.publicKey,
-        ephemeralPubkeySalt: ephemeralKey.salt,
-        ephemeralPubkeyExpiry: Math.floor(ephemeralKey.expiry.getTime() / 1000)
-      };
+      // Use StealthNote-compatible circuit input generation
+      // This matches the exact StealthNote implementation from the blog
+      return createStealthNoteCircuitInput(
+        jwtToken,
+        ephemeralKey.publicKey,
+        ephemeralKey.salt,
+        Math.floor(ephemeralKey.expiry.getTime() / 1000),
+        domain
+      );
     } catch (error) {
       console.error('Failed to create JWT circuit input:', error);
       throw error;
@@ -186,15 +151,14 @@ export class JWTCircuitTestSuite {
    * Run all tests
    */
   static async runAllTests(): Promise<void> {
-    console.log('🚀 Running complete JWT Circuit Integration Tests');
+    console.log('🚀 Running JWT Circuit Tests');
     
     try {
       await this.testJWTCircuitService();
       await this.testWithRealJWTStructure();
-      
-      console.log('\n🎊 All tests completed successfully!');
+      console.log('🎊 All tests completed successfully!');
     } catch (error) {
-      console.error('\n💥 Test suite failed:', error);
+      console.error('💥 Test suite failed:', error);
       throw error;
     }
   }

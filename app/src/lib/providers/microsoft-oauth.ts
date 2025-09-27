@@ -1,6 +1,7 @@
 import { AnonGroupProvider, AnonGroup, EphemeralKey } from '../../types';
 import { Storage } from '../storage';
 import { JWTCircuitService } from '../circuits/jwt';
+import { extractDomainWithCircuitIntegration, createCircuitDomainBytes, createStealthNoteCircuitInput } from '../domain-extraction';
 import { StorageKeys } from '../../types';
 import { OAuthConfig } from '../../config/oauth';
 import { Platform } from 'react-native';
@@ -367,53 +368,18 @@ export class MicrosoftOAuthProvider implements AnonGroupProvider {
     ephemeralKey: EphemeralKey
   ): any {
     try {
-      // Split JWT token into header.payload.signature
-      const parts = jwtToken.split('.');
-      if (parts.length !== 3) {
-        throw new Error('Invalid JWT token format');
-      }
-
-      const [header, payload, signature] = parts;
-      const headerPayload = `${header}.${payload}`;
-      
-      // Convert strings to byte arrays
-      const partialData = new Array(640).fill(0);
-      const headerPayloadBytes = Array.from(new TextEncoder().encode(headerPayload));
-      
-      // Copy header.payload bytes to partial_data (truncate if too long)
-      const maxLength = Math.min(headerPayloadBytes.length, 640);
-      for (let i = 0; i < maxLength; i++) {
-        partialData[i] = headerPayloadBytes[i];
-      }
-
-      // Create domain byte array
-      const domainBytes = new Array(64).fill(0);
-      const domainByteArray = Array.from(new TextEncoder().encode(domain));
-      const maxDomainLength = Math.min(domainByteArray.length, 64);
-      for (let i = 0; i < maxDomainLength; i++) {
-        domainBytes[i] = domainByteArray[i];
-      }
-
-      // Create mock RSA parameters (in real implementation, these would come from Microsoft's public keys)
-      const mockRSALimbs = new Array(18).fill(1);
-
-      // Create circuit input matching the Noir circuit structure
-      return {
-        partialData,
-        partialHash: [1, 2, 3, 4, 5, 6, 7, 8], // Mock hash
-        fullDataLength: headerPayloadBytes.length,
-        base64DecodeOffset: 0,
-        jwtPubkeyModulusLimbs: mockRSALimbs,
-        jwtPubkeyRedcParamsLimbs: mockRSALimbs,
-        jwtSignatureLimbs: mockRSALimbs,
-        domain: domainBytes,
-        ephemeralPubkey: ephemeralKey.publicKey,
-        ephemeralPubkeySalt: ephemeralKey.salt,
-        ephemeralPubkeyExpiry: Math.floor(ephemeralKey.expiry.getTime() / 1000)
-      };
+      // Use StealthNote-compatible circuit input generation
+      // This matches the exact StealthNote implementation from the blog
+      return createStealthNoteCircuitInput(
+        jwtToken,
+        ephemeralKey.publicKey,
+        ephemeralKey.salt,
+        Math.floor(ephemeralKey.expiry.getTime() / 1000),
+        domain
+      );
     } catch (error) {
       console.error('Failed to create JWT circuit input:', error);
-      throw new Error(`Failed to create circuit input: ${error.message}`);
+      throw new Error(`Failed to create circuit input: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
