@@ -1,350 +1,327 @@
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Post, postsData } from "../../data";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
 
-// Placeholder Vector components - you'll need to implement these or import from your design system
-const Vector = () => <View style={{ width: 20, height: 20, backgroundColor: '#333' }} />;
-const Vector2 = () => <View style={{ width: 20, height: 20, backgroundColor: '#333' }} />;
-const Vector3 = () => <View style={{ width: 20, height: 20, backgroundColor: '#333' }} />;
-const Vector4 = () => <View style={{ width: 20, height: 20, backgroundColor: '#333' }} />;
+// Research papers data from ethresear.ch
+const researchPapers = [
+  {
+    id: "1",
+    title: "Vanguard Prepares to Permit U.S. Clients Access to Third-Party Crypto ETFs",
+    category: "News",
+    timeAgo: "6 hours ago",
+    posts: "11k Posts",
+    authors: [
+      { id: "1", color: "#FF6B6B", label: "A1" },
+      { id: "2", color: "#4ECDC4", label: "B2" },
+      { id: "3", color: "#45B7D1", label: "C3" },
+    ],
+    upvotes: 142,
+    downvotes: 8,
+    comments: 23,
+    userVote: null as 'up' | 'down' | null,
+    hasImage: true,
+  },
+  {
+    id: "2",
+    title: "Community Feedback Wanted: Privacy-Focused ZK Rollup with EVM Compatibility",
+    category: "ZK Rollup",
+    timeAgo: "2 days ago",
+    posts: "84 Posts",
+    authors: [
+      { id: "4", color: "#96CEB4", label: "D4" },
+      { id: "5", color: "#FFEAA7", label: "E5" },
+    ],
+    upvotes: 89,
+    downvotes: 3,
+    comments: 15,
+    userVote: null as 'up' | 'down' | null,
+    hasImage: false,
+  },
+  {
+    id: "3",
+    title: "Deep Funding: A Prediction Market For Open Source Dependencies",
+    category: "Economics",
+    timeAgo: "3 days ago",
+    posts: "78 Posts",
+    authors: [
+      { id: "6", color: "#DDA0DD", label: "F6" },
+    ],
+    upvotes: 67,
+    downvotes: 2,
+    comments: 12,
+    userVote: null as 'up' | 'down' | null,
+    hasImage: false,
+  },
+  {
+    id: "4",
+    title: "Fork-Choice enforced Inclusion Lists (FOCIL): A simple committee-based inclusion list proposal",
+    category: "Block proposer",
+    timeAgo: "4 days ago",
+    posts: "10k Posts",
+    authors: [
+      { id: "7", color: "#F7DC6F", label: "G7" },
+      { id: "8", color: "#BB8FCE", label: "H8" },
+      { id: "9", color: "#85C1E9", label: "I9" },
+    ],
+    upvotes: 234,
+    downvotes: 12,
+    comments: 45,
+    userVote: null as 'up' | 'down' | null,
+    hasImage: false,
+  },
+];
 
-// Using the Post interface from data/index.ts instead of local PostData
+export default function Research() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [papers, setPapers] = useState(researchPapers);
 
-interface HomeProps {
-  testID?: string;
-  style?: any;
-}
+  const handleVote = (paperId: string, voteType: 'up' | 'down') => {
+    setPapers(prev => prev.map(paper => {
+      if (paper.id === paperId) {
+        const currentVote = paper.userVote;
+        let newUpvotes = paper.upvotes;
+        let newDownvotes = paper.downvotes;
+        let newUserVote: 'up' | 'down' | null = voteType;
 
-// Using posts data from JSON file instead of hardcoded array
+        // Remove previous vote if exists
+        if (currentVote === 'up') newUpvotes--;
+        if (currentVote === 'down') newDownvotes--;
 
-// PostItem component to render individual posts
-const PostItem = ({ post }: { post: Post }) => (
-      <View testID="1892:379" style={styles.frame80}>
-        <View testID="1892:380" style={styles.frame43}>
-          <View testID="1892:381" style={styles.frame45}>
-            <View testID="1892:382" style={styles.frame44}>
-              <View testID="1892:383" style={styles.frame13213216972}>
-            {post.profile ? (
-              <Image 
-                source={{ uri: post.profile }} 
-                style={styles.profileImage}
-                resizeMode="cover"
-              />
-            ) : null}
-              </View>
-              <View testID="1892:384" style={styles.frame36}>
-                <Text testID="1892:385" style={styles.othenticEth}>
-              {post.username}
-                </Text>
-                <View testID="1892:386" style={styles.frame97}>
-                  <Text testID="1892:387" style={styles.someoneFromParadigm}>
-                {post.userDescription}
-                  </Text>
+        // If clicking same vote, remove it
+        if (currentVote === voteType) {
+          newUserVote = null;
+        } else {
+          // Add new vote
+          if (voteType === 'up') newUpvotes++;
+          if (voteType === 'down') newDownvotes++;
+        }
+
+        return {
+          ...paper,
+          upvotes: newUpvotes,
+          downvotes: newDownvotes,
+          userVote: newUserVote,
+        };
+      }
+      return paper;
+    }));
+  };
+
+  const handleComment = (paperId: string) => {
+    console.log(`Opening comments for paper ${paperId}`);
+  };
+
+  const handleVerify = (paperId: string) => {
+    console.log(`Verifying paper ${paperId}`);
+  };
+
+  const filteredPapers = papers.filter(paper => 
+    paper.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    paper.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.logoContainer}>
+          <Ionicons name="library" size={28} color="#2ECC71" />
+        </View>
+        <Text style={styles.headerTitle}>Research</Text>
+        <TouchableOpacity style={styles.searchButton}>
+          <Ionicons name="search" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Research Papers */}
+      <ScrollView style={styles.papersContainer} showsVerticalScrollIndicator={false}>
+        {filteredPapers.map((paper) => (
+          <View key={paper.id} style={styles.paperCard}>
+            <View style={styles.paperContent}>
+              <Text style={styles.paperTitle}>{paper.title}</Text>
               
-
+              <View style={styles.paperMeta}>
+                <View style={styles.authorsContainer}>
+                  {paper.authors.map((author, index) => (
+                    <View
+                      key={author.id}
+                      style={[
+                        styles.authorAvatar,
+                        { backgroundColor: author.color },
+                        index > 0 && { marginLeft: -8 }
+                      ]}
+                    >
+                      <Text style={styles.authorLabel}>{author.label}</Text>
+                    </View>
+                  ))}
+                </View>
+                
+                <View style={styles.metaInfo}>
+                  <Text style={styles.timeAgo}>{paper.timeAgo}</Text>
+                  <View style={styles.separator} />
+                  <Text style={styles.category}>{paper.category}</Text>
+                  <View style={styles.separator} />
+                  <Text style={styles.posts}>{paper.posts}</Text>
                 </View>
               </View>
             </View>
-            <Text testID="1892:388" style={styles.$10H}>
-          {post.timeAgo}
-            </Text>
-          </View>
-          <Text testID="1892:389" style={styles.slashingOnIsntJustAboutPenaltiesAnymoreItsBecomingProgrammable}>
-        {post.content}
-          </Text>
-      {post.image && (
-        <View testID="1884:432" style={styles.rectangle5}>
-          <Image 
-            source={{ uri: post.image }} 
-            style={styles.postImage}
-            resizeMode="cover"
-          />
-        </View>
-      )}
-          <View testID="1892:391" style={styles.frame46}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
-  <path d="M8.97314 1.0625C9.07485 1.13427 9.17342 1.22968 9.31689 1.37402L9.41162 1.46875V1.46777C9.51318 1.56903 9.6143 1.67119 9.71631 1.77344L9.93701 1.99414V1.99316C10.115 2.17077 10.2923 2.34925 10.4702 2.52734L10.9673 3.02441C11.0091 3.06622 11.0514 3.10761 11.0933 3.14941C11.4854 3.54135 11.8771 3.93382 12.269 4.32617L15.8726 7.92969C15.9693 8.02619 16.0657 8.12343 16.1626 8.2207L16.1646 8.22266L16.2515 8.30859C16.2769 8.33419 16.3014 8.35831 16.3276 8.38477L16.3286 8.38672C16.3419 8.39997 16.3577 8.41478 16.3726 8.42969C16.3738 8.43616 16.3764 8.45098 16.3774 8.48145C16.3781 8.5029 16.3768 8.52674 16.3765 8.55664C16.3734 8.5595 16.3695 8.56204 16.3657 8.56543V8.56641C16.3606 8.56722 16.3497 8.56865 16.3276 8.56934C16.3038 8.57006 16.274 8.57016 16.229 8.56934V8.56836H16.1206C16.0185 8.56825 15.9159 8.56761 15.8101 8.56641H15.8052C15.7313 8.56612 15.6574 8.56558 15.5835 8.56543L15.0063 8.56152C14.8075 8.55994 14.6087 8.55936 14.4116 8.55859C14.0252 8.55695 13.6382 8.55499 13.2515 8.55176L12.6772 8.54688L12.6802 9.12109C12.6803 9.15342 12.68 9.18739 12.6802 9.2207C12.6836 10.021 12.6864 10.8218 12.688 11.6221C12.6888 12.0095 12.6901 12.3974 12.6919 12.7852C12.6934 13.1221 12.6945 13.459 12.6948 13.7959C12.695 13.9751 12.6956 14.1549 12.6968 14.335C12.6978 14.5017 12.698 14.6687 12.6978 14.8359V14.8369L12.6987 15.0273C12.7023 15.4222 12.6644 15.5976 12.5317 15.751C12.3837 15.8792 12.2493 15.9301 12.0425 15.9307H12.0405C12.0135 15.9308 11.9854 15.9315 11.9575 15.9316H11.6841C11.6181 15.9319 11.5518 15.9323 11.4858 15.9326C11.3079 15.9333 11.1294 15.9335 10.9507 15.9336C10.8386 15.9336 10.7266 15.9334 10.6147 15.9336C10.2246 15.9343 9.83406 15.9346 9.44385 15.9346C9.07945 15.9345 8.715 15.9353 8.35107 15.9365C8.03936 15.9375 7.72741 15.9385 7.41553 15.9385H7.41455C7.22778 15.9385 7.04053 15.9386 6.85303 15.9395H6.13232L5.85498 15.9336C5.62931 15.9182 5.50038 15.8723 5.38428 15.7715C5.25686 15.624 5.20729 15.4908 5.20752 15.2949V14.7578C5.2075 14.5866 5.20796 14.4143 5.2085 14.2422C5.20898 14.0615 5.20938 13.8809 5.20947 13.7012C5.20971 13.3607 5.21066 13.0195 5.21143 12.6787C5.21228 12.2903 5.21202 11.9017 5.2124 11.5137C5.2132 10.7156 5.2146 9.91726 5.21631 9.11914L5.21826 8.54688L4.64502 8.55176C4.60418 8.5521 4.56307 8.55238 4.521 8.55273C4.13689 8.55584 3.75278 8.55807 3.36865 8.55957C3.17025 8.56037 2.97107 8.56173 2.77197 8.56348C2.58233 8.56513 2.39177 8.56601 2.20166 8.56641H2.20068C2.12653 8.5667 2.0522 8.56654 1.97803 8.56738C1.87935 8.56846 1.77965 8.56843 1.67822 8.56836L1.66748 8.56934C1.64132 8.56982 1.61514 8.56884 1.58838 8.56934C1.53061 8.5687 1.52463 8.56368 1.53467 8.56738C1.53188 8.56585 1.52742 8.56145 1.51904 8.55566C1.5179 8.54785 1.51627 8.53577 1.51514 8.51758C1.5141 8.501 1.51367 8.48314 1.51318 8.46191C1.52152 8.44671 1.53668 8.42403 1.56299 8.39258C1.59013 8.36015 1.62422 8.32492 1.66846 8.28125C1.6906 8.2594 1.71337 8.23745 1.73877 8.21289C1.76329 8.18917 1.7908 8.16272 1.81787 8.13574L1.81982 8.13379L1.91162 8.04102C2.01247 7.9396 2.1135 7.83819 2.21533 7.73633L2.21631 7.73535C2.2892 7.66216 2.36219 7.58885 2.43506 7.51562C2.63252 7.31729 2.8307 7.11921 3.02881 6.9209C3.15265 6.79693 3.27624 6.67277 3.3999 6.54883C3.74269 6.20529 4.08625 5.86161 4.4292 5.51855L4.76221 5.18555C5.12082 4.8268 5.47963 4.46761 5.8374 4.1084C6.20457 3.73977 6.57205 3.37083 6.93994 3.00293C7.14662 2.79622 7.35361 2.5894 7.56006 2.38184C7.73496 2.206 7.90994 2.0304 8.08545 1.85547C8.17589 1.76531 8.26572 1.67402 8.35596 1.58301C8.45125 1.48694 8.54778 1.39147 8.64502 1.29492L8.65088 1.29004C8.69016 1.25004 8.69232 1.24729 8.72803 1.21094C8.8306 1.11003 8.88697 1.07911 8.91553 1.06836C8.92485 1.06485 8.94057 1.06078 8.97314 1.0625Z" stroke="#929292" stroke-width="1.13371"/>
-</svg>
-<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
-  <path d="M8.9165 15.9375C8.8148 15.8657 8.71623 15.7703 8.57275 15.626L8.47803 15.5312V15.5322C8.37647 15.431 8.27534 15.3288 8.17334 15.2266L7.95264 15.0059V15.0068C7.77469 14.8292 7.5973 14.6507 7.41943 14.4727L6.92236 13.9756C6.88053 13.9338 6.83822 13.8924 6.79639 13.8506C6.40423 13.4587 6.01255 13.0662 5.62061 12.6738L2.01709 9.07031C1.92038 8.97381 1.82394 8.87657 1.72705 8.7793L1.7251 8.77734L1.63818 8.69141C1.61278 8.66581 1.58827 8.64169 1.56201 8.61523L1.56104 8.61328C1.54779 8.60003 1.53199 8.58522 1.51709 8.57031C1.51585 8.56384 1.5132 8.54902 1.51221 8.51855C1.51151 8.4971 1.51281 8.47326 1.51318 8.44336C1.51625 8.4405 1.52011 8.43796 1.52393 8.43457V8.43359C1.52903 8.43278 1.53993 8.43135 1.56201 8.43066C1.5859 8.42994 1.61565 8.42984 1.66064 8.43066V8.43164H1.76904C1.87114 8.43175 1.9737 8.43239 2.07959 8.43359H2.08447C2.15837 8.43388 2.23227 8.43442 2.30615 8.43457L2.8833 8.43848C3.08218 8.44006 3.28096 8.44064 3.47803 8.44141C3.86445 8.44305 4.25142 8.44501 4.63818 8.44824L5.2124 8.45312L5.20947 7.87891C5.20933 7.84658 5.20962 7.81261 5.20947 7.7793C5.20608 6.97897 5.20325 6.17822 5.20166 5.37793C5.20087 4.99051 5.19952 4.60265 5.19775 4.21484C5.19622 3.87787 5.19517 3.54096 5.19482 3.2041C5.19462 3.02489 5.194 2.84505 5.19287 2.66504C5.19183 2.49826 5.19167 2.33126 5.19189 2.16406V2.16309L5.19092 1.97266C5.18735 1.57779 5.22521 1.40236 5.35791 1.24902C5.50592 1.12085 5.64034 1.06988 5.84717 1.06934H5.84912C5.87617 1.06916 5.90425 1.06854 5.93213 1.06836H6.20557C6.27155 1.06813 6.33784 1.06767 6.40381 1.06738C6.58172 1.06671 6.76028 1.06646 6.93896 1.06641C7.05105 1.06635 7.16306 1.06661 7.2749 1.06641C7.6651 1.0657 8.05558 1.06537 8.4458 1.06543C8.8102 1.06548 9.17465 1.06469 9.53857 1.06348C9.85029 1.06247 10.1622 1.06148 10.4741 1.06152H10.4751C10.6619 1.06154 10.8491 1.06137 11.0366 1.06055H11.7573L12.0347 1.06641C12.2603 1.08181 12.3893 1.12766 12.5054 1.22852C12.6328 1.37602 12.6824 1.50921 12.6821 1.70508V2.24219C12.6822 2.41344 12.6817 2.58571 12.6812 2.75781C12.6807 2.9385 12.6803 3.11915 12.6802 3.29883C12.6799 3.63931 12.679 3.98053 12.6782 4.32129C12.6774 4.70972 12.6776 5.09828 12.6772 5.48633C12.6764 6.28436 12.6751 7.08274 12.6733 7.88086L12.6714 8.45312L13.2446 8.44824C13.2855 8.4479 13.3266 8.44762 13.3687 8.44727C13.7528 8.44416 14.1369 8.44193 14.521 8.44043C14.7194 8.43963 14.9186 8.43827 15.1177 8.43652C15.3073 8.43487 15.4979 8.43399 15.688 8.43359H15.689C15.7631 8.4333 15.8375 8.43346 15.9116 8.43262C16.0103 8.43154 16.11 8.43157 16.2114 8.43164L16.2222 8.43066C16.2483 8.43018 16.2745 8.43116 16.3013 8.43066C16.359 8.4313 16.365 8.43632 16.355 8.43262C16.3578 8.43415 16.3622 8.43855 16.3706 8.44434C16.3718 8.45215 16.3734 8.46423 16.3745 8.48242C16.3755 8.499 16.376 8.51686 16.3765 8.53809C16.3681 8.55329 16.353 8.57597 16.3267 8.60742C16.2995 8.63985 16.2654 8.67508 16.2212 8.71875C16.1991 8.7406 16.1763 8.76255 16.1509 8.78711C16.1264 8.81083 16.0988 8.83728 16.0718 8.86426L16.0698 8.86621L15.978 8.95898C15.8772 9.0604 15.7762 9.16181 15.6743 9.26367L15.6733 9.26465C15.6004 9.33784 15.5275 9.41115 15.4546 9.48438C15.2571 9.68271 15.059 9.88079 14.8608 10.0791C14.737 10.2031 14.6134 10.3272 14.4897 10.4512C14.147 10.7947 13.8034 11.1384 13.4604 11.4814L13.1274 11.8145C12.7688 12.1732 12.41 12.5324 12.0522 12.8916C11.6851 13.2602 11.3176 13.6292 10.9497 13.9971C10.743 14.2038 10.536 14.4106 10.3296 14.6182C10.1547 14.794 9.97971 14.9696 9.8042 15.1445C9.71376 15.2347 9.62393 15.326 9.53369 15.417C9.4384 15.5131 9.34187 15.6085 9.24463 15.7051L9.23877 15.71C9.19949 15.75 9.19733 15.7527 9.16162 15.7891C9.05905 15.89 9.00268 15.9209 8.97412 15.9316C8.96479 15.9351 8.94907 15.9392 8.9165 15.9375Z" stroke="#929292" stroke-width="1.13371"/>
-</svg>
-            <View testID="1892:394" style={styles.frame452}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
-  <path d="M7.45459 0.642578C9.11436 0.362757 11.0115 0.81106 12.3765 1.7959L12.3774 1.79688L12.4712 1.86426C13.1012 2.32755 13.6549 2.85837 14.0913 3.47754L14.0972 3.48633C14.1226 3.52105 14.1489 3.55513 14.1743 3.58984V3.59082C15.1627 4.9735 15.5649 6.81817 15.3149 8.51367C15.2876 8.67492 15.2545 8.83614 15.2173 8.99805L15.0913 9.49707C15.084 9.52378 15.0764 9.55068 15.0688 9.57812C14.8213 10.4537 14.349 11.2817 13.7437 11.9834L13.7417 11.9863C13.7079 12.0261 13.7057 12.0276 13.6743 12.0645C13.3391 12.4474 12.9882 12.7893 12.5981 13.0723L12.5972 13.0742C12.5801 13.0867 12.562 13.0985 12.5444 13.1113C11.9201 13.5642 11.2374 13.9074 10.5015 14.1367L10.4985 14.1377C10.4641 14.1487 10.4631 14.1484 10.4292 14.1592C9.80902 14.3544 9.15622 14.437 8.48486 14.4375C8.46068 14.4375 8.43651 14.4375 8.41162 14.4375C8.00324 14.4369 7.61872 14.4119 7.23682 14.3428L7.15088 14.3271H7.1499C6.40005 14.1856 5.62859 13.9614 5.08252 13.5801L5.04541 13.5547L5.00537 13.5342L4.86768 13.4824C4.55119 13.392 4.26733 13.5085 4.20752 13.5273L4.19873 13.5303L4.19092 13.5322L3.87158 13.6475C3.81351 13.6686 3.81344 13.6689 3.75439 13.6904L3.44287 13.8047C3.34165 13.8418 3.24029 13.8788 3.13818 13.916C3.09795 13.9307 3.05733 13.9453 3.01709 13.96C2.93712 13.9891 2.85695 14.0187 2.77686 14.0479H2.77588C2.58207 14.1184 2.38697 14.1901 2.19189 14.2646C2.15638 14.278 2.12106 14.2919 2.08447 14.3057C2.01925 14.3302 1.95359 14.3552 1.88818 14.3809C1.72059 14.4433 1.63584 14.4456 1.58252 14.4326C1.55541 14.4115 1.5334 14.3849 1.51318 14.3428C1.51007 14.2987 1.51417 14.2335 1.54443 14.1318C1.58837 13.9842 1.63866 13.881 1.71533 13.6748L1.71631 13.6719L1.78564 13.4814L2.10596 12.6152C2.15102 12.4948 2.19525 12.3736 2.23975 12.2539C2.27029 12.1723 2.30253 12.0904 2.33447 12.0068L2.33545 12.0039C2.35378 11.9549 2.37184 11.9054 2.39014 11.8564C2.39892 11.834 2.40842 11.8103 2.41748 11.7871L2.42139 11.7764C2.46322 11.6628 2.50203 11.5256 2.50342 11.3672C2.50478 11.2036 2.46665 11.0574 2.41064 10.9248L2.39697 10.8926L2.37842 10.8613C2.36942 10.8458 2.36029 10.8303 2.35107 10.8145H2.35205C2.33488 10.7839 2.33436 10.784 2.31689 10.7529L2.31494 10.75L2.28174 10.6924H2.28271C1.76224 9.74036 1.51057 8.63209 1.51611 7.53027V7.45508C1.52079 6.39327 1.76891 5.38309 2.23389 4.41602C2.24409 4.39478 2.25466 4.37338 2.26514 4.35156C2.49389 3.88298 2.78995 3.44432 3.13721 3.04688L3.14111 3.04297C3.16062 3.0202 3.17968 2.997 3.19971 2.97363C3.53877 2.58668 3.89195 2.24224 4.28662 1.95312L4.28857 1.95215C4.31427 1.93319 4.33936 1.91301 4.36572 1.89355L4.3667 1.89453C5.26232 1.2513 6.29363 0.836595 7.38916 0.65332H7.39307C7.42367 0.647945 7.4254 0.646558 7.45361 0.641602L7.45459 0.642578Z" stroke="#929292" stroke-width="1.13"/>
-</svg>
-            </View>
-            <Text testID="1892:396" style={styles.verify}>
-              {`Verify`}
-            </Text>
-          </View>
-        </View>
-  </View>
-);
 
-export default function Home(props: HomeProps = {}) {
-  return (
-    <View testID={props.testID ?? "1892:397"} style={[styles.root, props.style]}>
-      <View testID="1892:358" style={styles.frame106}>
-        <View testID="1892:359" style={styles.frame1321321697}>
-        </View>
-        <Text testID="1892:360" style={styles.community}>
-          {`Community`}
-        </Text>
-        <View testID="1892:361" style={styles.frame1321321698}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="21" viewBox="0 0 22 21" fill="none">
-  <path fill-rule="evenodd" clip-rule="evenodd" d="M10.0609 16.3402C10.9801 16.3402 11.8904 16.1591 12.7397 15.8073C13.5889 15.4555 14.3606 14.9399 15.0106 14.2899C15.6606 13.6399 16.1762 12.8682 16.528 12.019C16.8798 11.1697 17.0609 10.2594 17.0609 9.34017C17.0609 8.42092 16.8798 7.51066 16.528 6.66139C16.1762 5.81211 15.6606 5.04043 15.0106 4.39042C14.3606 3.74041 13.5889 3.2248 12.7397 2.87301C11.8904 2.52123 10.9801 2.34017 10.0609 2.34017C8.20436 2.34017 6.42388 3.07767 5.11112 4.39042C3.79837 5.70318 3.06087 7.48365 3.06087 9.34017C3.06087 11.1967 3.79837 12.9772 5.11112 14.2899C6.42388 15.6027 8.20436 16.3402 10.0609 16.3402ZM10.0609 18.6735C12.5362 18.6735 14.9102 17.6902 16.6605 15.9398C18.4109 14.1895 19.3942 11.8155 19.3942 9.34017C19.3942 6.86481 18.4109 4.49085 16.6605 2.74051C14.9102 0.990167 12.5362 0.00683594 10.0609 0.00683594C7.58552 0.00683594 5.21155 0.990167 3.46121 2.74051C1.71087 4.49085 0.727539 6.86481 0.727539 9.34017C0.727539 11.8155 1.71087 14.1895 3.46121 15.9398C5.21155 17.6902 7.58552 18.6735 10.0609 18.6735Z" fill="white"/>
-  <path fill-rule="evenodd" clip-rule="evenodd" d="M15.1011 14.3455C15.3206 14.1276 15.6178 14.0057 15.9271 14.0068C16.2365 14.0079 16.5327 14.1319 16.7508 14.3513L21.3883 19.018C21.6002 19.2386 21.7171 19.5337 21.7136 19.8396C21.7101 20.1456 21.5866 20.4379 21.3696 20.6536C21.1526 20.8693 20.8596 20.9912 20.5537 20.993C20.2477 20.9947 19.9533 20.8762 19.7339 20.663L15.0964 15.9963C14.8783 15.7769 14.7563 15.4799 14.7572 15.1705C14.758 14.8612 14.8817 14.5648 15.1011 14.3467V14.3455Z" fill="white"/>
-</svg>
-      </View>
-    </View>
-      <ScrollView 
-        testID="1892:363" 
-        style={styles.frame99}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {postsData.posts.map((post) => (
-          <PostItem key={post.id} post={post} />
+            {paper.hasImage && (
+              <View style={styles.paperImage} />
+            )}
+          </View>
         ))}
       </ScrollView>
-  </View>
+
+      {/* Floating Action Button */}
+      <TouchableOpacity style={styles.fab}>
+        <Ionicons name="add" size={28} color="white" />
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-    root: {
+  container: {
     flex: 1,
-        paddingTop: 45,
-        paddingLeft: 0,
-        paddingBottom: 45,
-        paddingRight: 0,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        rowGap: 20,
-        columnGap: 20,
-        backgroundColor: 'rgba(0, 0, 0, 1)',
-      },
-  rectangle5: {
-    height: 251.28799,
-    alignSelf: 'stretch',
-    borderBottomLeftRadius: 13.261,
-    borderBottomRightRadius: 13.261,
-    borderTopLeftRadius: 13.261,
-    borderTopRightRadius: 13.261,
-    backgroundColor: 'rgba(28, 28, 28, 1)',
-    overflow: 'hidden',
+    backgroundColor: '#000000',
   },
-  postImage: {
-    width: '100%',
-    height: '100%',
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
   },
-  profileImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 46,
-      },
-      frame106: {
-        flexDirection: 'row',
-        paddingTop: 0,
-        paddingLeft: 10,
-        paddingBottom: 0,
-        paddingRight: 10,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        alignSelf: 'stretch',
-      },
-      frame1321321697: {
-        flexDirection: 'row',
-        width: 47.559,
-        height: 49,
-        alignItems: 'center',
-        rowGap: 10,
-        columnGap: 10,
-        borderBottomLeftRadius: 46,
-        borderBottomRightRadius: 46,
-        borderTopLeftRadius: 46,
-        borderTopRightRadius: 46,
-        backgroundColor: 'rgba(28, 28, 28, 1)',
-      },
-      community: {
-        flexGrow: 1,
-        flexShrink: 0,
-        flexBasis: 0,
-        color: 'rgba(255, 255, 255, 1)',
-        textAlign: 'center',
-    fontFamily: 'Aeonik-Regular',
-        fontSize: 18,
-        fontStyle: 'normal',
-        fontWeight: '400',
-        lineHeight: 17.365,
-        letterSpacing: 0.18,
-      },
-      frame1321321698: {
-        flexDirection: 'row',
-        width: 47.559,
-        height: 49,
-        justifyContent: 'center',
-        alignItems: 'center',
-        rowGap: 10,
-        columnGap: 10,
-        borderBottomLeftRadius: 46,
-        borderBottomRightRadius: 46,
-        borderTopLeftRadius: 46,
-        borderTopRightRadius: 46,
-        backgroundColor: 'rgba(28, 28, 28, 1)',
-      },
-      frame99: {
+  logoContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1a1a1a',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    color: '#ffffff',
+    fontSize: 20,
+    fontWeight: '600',
     flex: 1,
-    alignSelf: 'stretch',
+    textAlign: 'center',
   },
-  scrollContent: {
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-    paddingBottom: 20,
-      },
-      frame80: {
-        flexDirection: 'row',
-        paddingTop: 0,
-        paddingLeft: 10,
-        paddingBottom: 0,
-        paddingRight: 10,
-        alignItems: 'center',
-        rowGap: 10,
-        columnGap: 10,
-        alignSelf: 'stretch',
-      },
-      frame43: {
-        paddingTop: 20,
-        paddingLeft: 0,
-        paddingBottom: 20,
-        paddingRight: 0,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        rowGap: 20,
-        columnGap: 20,
-        flexGrow: 1,
-        flexShrink: 0,
-        flexBasis: 0,
-        borderTopColor: 'rgba(51, 54, 57, 1)',
-        borderTopWidth: 1,
-        borderBottomColor: 'rgba(51, 54, 57, 1)',
-        borderBottomWidth: 1,
-      },
-      frame45: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        rowGap: 8.014,
-        columnGap: 8.014,
-        alignSelf: 'stretch',
-      },
-      frame44: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        rowGap: 11,
-        columnGap: 11,
-        flexGrow: 1,
-        flexShrink: 0,
-        flexBasis: 0,
-      },
-      frame13213216972: {
-        flexDirection: 'row',
-        width: 47.559,
-        height: 49,
-        alignItems: 'center',
-        rowGap: 10,
-        columnGap: 10,
-        borderBottomLeftRadius: 46,
-        borderBottomRightRadius: 46,
-        borderTopLeftRadius: 46,
-        borderTopRightRadius: 46,
-        backgroundColor: 'rgba(28, 28, 28, 1)',
-      },
-      othenticEth: {
-        alignSelf: 'stretch',
-        color: 'rgba(255, 255, 255, 1)',
-    fontFamily: 'Aeonik-Bold',
-        fontSize: 18,
-        fontStyle: 'normal',
-        fontWeight: '700',
-      },
-      someoneFromParadigm: {
-        flexGrow: 1,
-        flexShrink: 0,
-        flexBasis: 0,
-        color: 'rgba(146, 146, 146, 1)',
-    fontFamily: 'Aeonik-Regular',
-        fontSize: 16,
-        fontStyle: 'normal',
-        fontWeight: '400',
-      },
-      frame36: {
-        paddingTop: 2,
-        paddingLeft: 0,
-        paddingBottom: 4,
-        paddingRight: 0,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        rowGap: 2,
-        columnGap: 2,
-        flexGrow: 1,
-        flexShrink: 0,
-        flexBasis: 0,
-        alignSelf: 'stretch',
-      },
-      frame97: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        rowGap: 5,
-        columnGap: 5,
-        alignSelf: 'stretch',
-      },
-      $10H: {
-        width: 38,
-        alignSelf: 'stretch',
-        color: 'rgba(146, 146, 146, 1)',
-    fontFamily: 'Aeonik-Regular',
-        fontSize: 16,
-        fontStyle: 'normal',
-        fontWeight: '400',
-      },
-      slashingOnIsntJustAboutPenaltiesAnymoreItsBecomingProgrammable: {
-        alignSelf: 'stretch',
-        color: 'rgba(255, 255, 255, 1)',
-    fontFamily: 'Aeonik-Regular',
-        fontSize: 17.029,
-        fontStyle: 'normal',
-        fontWeight: '400',
-        lineHeight: 24.1,
-        letterSpacing: 0.17,
-      },
-      frame46: {
-        flexDirection: 'row',
-        paddingTop: 0,
-        paddingLeft: 9.945,
-        paddingBottom: 0,
-        paddingRight: 9.945,
-        alignItems: 'center',
-        rowGap: 30,
-        columnGap: 30,
-        alignSelf: 'stretch',
-      },
-      frame452: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        rowGap: 9,
-        columnGap: 9,
-      },
-      verify: {
-        flexGrow: 1,
-        flexShrink: 0,
-        flexBasis: 0,
-        color: 'rgba(146, 146, 146, 1)',
-        textAlign: 'right',
-    fontFamily: 'SFMono-Regular',
-        fontSize: 14,
-        fontStyle: 'normal',
-        fontWeight: '400',
-        letterSpacing: 0.42,
-      },
+  searchButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1a1a1a',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  papersContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  paperCard: {
+    backgroundColor: '#000000',
+    borderRadius: 0,
+    paddingVertical: 20,
+    marginVertical: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333539',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  paperContent: {
+    flex: 1,
+    paddingRight: 16,
+  },
+  paperTitle: {
+    color: '#D9D9D9',
+    fontSize: 15,
+    fontWeight: '700',
+    lineHeight: 22,
+    marginBottom: 12,
+  },
+  paperMeta: {
+    flexDirection: 'column',
+    gap: 8,
+  },
+  authorsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  authorAvatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#000',
+  },
+  authorLabel: {
+    color: '#000',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  metaInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  timeAgo: {
+    color: '#70767A',
+    fontSize: 13,
+    fontWeight: '400',
+  },
+  separator: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#292929',
+  },
+  category: {
+    color: '#70767A',
+    fontSize: 13,
+    fontWeight: '400',
+  },
+  posts: {
+    color: '#70767A',
+    fontSize: 13,
+    fontWeight: '400',
+  },
+  paperImage: {
+    width: 78.667,
+    height: 78.667,
+    borderRadius: 11.333,
+    backgroundColor: '#292929',
+    marginLeft: 16,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#D1D5DB',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
 });

@@ -1,522 +1,348 @@
-import { StyleSheet, Text, View } from "react-native";
-import { Path, Svg } from "react-native-svg";
+import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import {
+    Image,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
+
+// Import posts data
+const postsData = require("../../data/posts.json");
+
+// Anonymous avatar generator function
+const generateAvatarUrl = (seed: string) => `https://api.dicebear.com/7.x/avataaars/png?seed=${seed}&backgroundColor=1c1c1c`;
 
 export default function Chat() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [posts, setPosts] = useState(
+    postsData.posts.map((post: any) => ({
+      ...post,
+      avatar: generateAvatarUrl(post.username),
+      upvotes: Math.floor(Math.random() * 100) + 10,
+      downvotes: Math.floor(Math.random() * 20),
+      commentsCount: post.comments?.length || 0,
+      userVote: null as 'up' | 'down' | null,
+    }))
+  );
+
+  const handleVote = (postId: string, voteType: 'up' | 'down') => {
+    setPosts(prev => prev.map((post: any) => {
+      if (post.id === postId) {
+        const currentVote = post.userVote;
+        let newUpvotes = post.upvotes;
+        let newDownvotes = post.downvotes;
+        let newUserVote: 'up' | 'down' | null = voteType;
+
+        // Remove previous vote if exists
+        if (currentVote === 'up') newUpvotes--;
+        if (currentVote === 'down') newDownvotes--;
+
+        // If clicking same vote, remove it
+        if (currentVote === voteType) {
+          newUserVote = null;
+        } else {
+          // Add new vote
+          if (voteType === 'up') newUpvotes++;
+          if (voteType === 'down') newDownvotes++;
+        }
+
+        return {
+          ...post,
+          upvotes: newUpvotes,
+          downvotes: newDownvotes,
+          userVote: newUserVote,
+        };
+      }
+      return post;
+    }));
+  };
+
+  const handleComment = (postId: string) => {
+    console.log(`Opening comments for post ${postId}`);
+  };
+
+  const handleVerify = (postId: string) => {
+    console.log(`Verifying post ${postId}`);
+  };
+
+  const filteredPosts = posts.filter((post: any) => 
+    post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    post.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <View testID="1884:453" style={styles.root}>
-    <View testID="1884:327" style={styles.frame106}>
-      <View testID="1884:454" style={styles.frame1321321697}>
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Image
+          source={{ uri: generateAvatarUrl("user-profile") }}
+          style={styles.profileAvatar}
+        />
+        <Text style={styles.headerTitle}>Community</Text>
+        <TouchableOpacity style={styles.searchButton}>
+          <Ionicons name="search" size={24} color="white" />
+        </TouchableOpacity>
       </View>
-      <Text testID="1884:331" style={styles.community}>
-        {`Community`}
-      </Text>
-      <View testID="1884:460" style={styles.frame1321321698}>
-      <Svg width="22" height="21" viewBox="0 0 22 21" fill="none">
-          <Path 
-            fillRule="evenodd" 
-            clipRule="evenodd" 
-            d="M10.0609 16.3403C10.9801 16.3403 11.8904 16.1592 12.7397 15.8074C13.5889 15.4557 14.3606 14.94 15.0106 14.29C15.6606 13.64 16.1762 12.8684 16.528 12.0191C16.8798 11.1698 17.0609 10.2595 17.0609 9.34029C17.0609 8.42104 16.8798 7.51079 16.528 6.66151C16.1762 5.81223 15.6606 5.04055 15.0106 4.39054C14.3606 3.74053 13.5889 3.22492 12.7397 2.87313C11.8904 2.52135 10.9801 2.34029 10.0609 2.34029C8.20436 2.34029 6.42388 3.07779 5.11112 4.39054C3.79837 5.7033 3.06087 7.48378 3.06087 9.34029C3.06087 11.1968 3.79837 12.9773 5.11112 14.29C6.42388 15.6028 8.20436 16.3403 10.0609 16.3403ZM10.0609 18.6736C12.5362 18.6736 14.9102 17.6903 16.6605 15.94C18.4109 14.1896 19.3942 11.8156 19.3942 9.34029C19.3942 6.86494 18.4109 4.49097 16.6605 2.74063C14.9102 0.990289 12.5362 0.00695801 10.0609 0.00695801C7.58552 0.00695801 5.21155 0.990289 3.46121 2.74063C1.71087 4.49097 0.727539 6.86494 0.727539 9.34029C0.727539 11.8156 1.71087 14.1896 3.46121 15.94C5.21155 17.6903 7.58552 18.6736 10.0609 18.6736Z" 
-            fill="white"
+
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <View style={styles.searchWrapper}>
+          <Ionicons name="search" size={20} color="#666" />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search posts, users, topics..."
+            placeholderTextColor="#666"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
           />
-          <Path 
-            fillRule="evenodd" 
-            clipRule="evenodd" 
-            d="M15.1011 14.3456C15.3206 14.1277 15.6178 14.0059 15.9271 14.007C16.2365 14.0081 16.5327 14.132 16.7508 14.3515L21.3883 19.0181C21.6002 19.2388 21.7171 19.5338 21.7136 19.8398C21.7101 20.1457 21.5866 20.438 21.3696 20.6537C21.1526 20.8695 20.8596 20.9913 20.5537 20.9931C20.2477 20.9949 19.9533 20.8764 19.7339 20.6631L15.0964 15.9965C14.8783 15.7771 14.7563 15.48 14.7572 15.1707C14.758 14.8613 14.8817 14.565 15.1011 14.3468V14.3456Z" 
-            fill="white"
-          />
-        </Svg>
-      </View>
-    </View>
-    <View testID="1884:335" style={styles.frame99}>
-      <View testID="1887:611" style={styles.frame63}>
-        <View testID="1887:612" style={styles.frame56}>
-          <View testID="1887:613" style={styles.frame52}>
-            <View testID="1887:614" style={styles.frame50}>
-              <Text testID="1887:615" style={styles.vanguardPreparesToPermitUSClientsAssessToThirdPartyCryptoEtFs}>
-                {`Vanguard Prepares to Permit U.S. Clients Assess to Third-Party Crypto ETFs`}
-              </Text>
-              <View testID="1887:616" style={styles.frame49}>
-                <View testID="1887:617" style={styles.frame48}>
-                  <View testID="1887:618" style={styles.frame1321321699}>
-                  </View>
-                  <View testID="1887:619" style={styles.frame1321321700}>
-                  </View>
-                  <View testID="1887:620" style={styles.frame1321321701}>
-                  </View>
-                </View>
-                <Text testID="1887:621" style={styles.$6HoursAgo}>
-                  {`6 hours ago `}
-                </Text>
-                <View testID="1887:622" style={styles.frame13213216992}>
-                </View>
-                <Text testID="1887:623" style={styles.news}>
-                  {`News`}
-                </Text>
-                <View testID="1887:624" style={styles.frame13213217002}>
-                </View>
-                <Text testID="1887:625" style={styles.$11KPosts}>
-                  {`11k Posts`}
-                </Text>
-              </View>
-            </View>
-          </View>
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery("")}>
+              <Ionicons name="close" size={20} color="#666" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
-      <View testID="1887:660" style={styles.frame64}>
-        <View testID="1887:661" style={styles.frame562}>
-          <View testID="1887:662" style={styles.frame522}>
-            <View testID="1887:663" style={styles.frame502}>
-              <Text testID="1887:664" style={styles.vanguardPreparesToPermitUSClientsAssessToThirdPartyCryptoEtFs2}>
-                {`Vanguard Prepares to Permit U.S. Clients Assess to Third-Party Crypto ETFs`}
-              </Text>
-              <View testID="1887:704" style={styles.frame503}>
-                <View testID="1887:705" style={styles.frame482}>
-                  <View testID="1887:706" style={styles.frame13213216993}>
-                  </View>
-                  <View testID="1887:707" style={styles.frame13213217003}>
-                  </View>
-                  <View testID="1887:708" style={styles.frame13213217012}>
-                  </View>
+
+      {/* Posts Feed */}
+      <ScrollView style={styles.postsContainer} showsVerticalScrollIndicator={false}>
+        {filteredPosts.map((post: any) => (
+          <View key={post.id} style={styles.postCard}>
+            <View style={styles.postHeader}>
+              <Image source={{ uri: post.avatar }} style={styles.userAvatar} />
+              <View style={styles.userInfo}>
+                <View style={styles.usernameRow}>
+                  <Text style={styles.username}>{post.username}</Text>
+                  <MaterialIcons name="verified" size={16} color="#1DA1F2" />
                 </View>
-                <Text testID="1887:709" style={styles.$6HoursAgo2}>
-                  {`6 hours ago `}
-                </Text>
-                <View testID="1887:710" style={styles.frame13213216994}>
-                </View>
-                <Text testID="1887:711" style={styles.news2}>
-                  {`News`}
-                </Text>
-                <View testID="1887:712" style={styles.frame13213217004}>
-                </View>
-                <Text testID="1887:713" style={styles.$11KPosts2}>
-                  {`11k Posts`}
-                </Text>
+                <Text style={styles.userDescription}>{post.userDescription}</Text>
+                <Text style={styles.timeAgo}>{post.timeAgo}</Text>
               </View>
             </View>
-            <View testID="1887:673" style={styles.rectangle6}/>
+
+            <Text style={styles.postContent}>{post.content}</Text>
+            
+            {post.image && (
+              <Image source={{ uri: post.image }} style={styles.postImage} />
+            )}
+
+            {/* Action Bar */}
+            <View style={styles.actionBar}>
+              <TouchableOpacity
+                style={[
+                  styles.actionButton,
+                  post.userVote === 'up' && styles.activeUpvote,
+                ]}
+                onPress={() => handleVote(post.id, 'up')}
+              >
+                <Ionicons
+                  name="arrow-up"
+                  size={20}
+                  color={post.userVote === 'up' ? '#00C851' : '#999'}
+                />
+                <Text
+                  style={[
+                    styles.actionText,
+                    post.userVote === 'up' && styles.activeUpvoteText,
+                  ]}
+                >
+                  {post.upvotes}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.actionButton,
+                  post.userVote === 'down' && styles.activeDownvote,
+                ]}
+                onPress={() => handleVote(post.id, 'down')}
+              >
+                <Ionicons
+                  name="arrow-down"
+                  size={20}
+                  color={post.userVote === 'down' ? '#FF4444' : '#999'}
+                />
+                <Text
+                  style={[
+                    styles.actionText,
+                    post.userVote === 'down' && styles.activeDownvoteText,
+                  ]}
+                >
+                  {post.downvotes}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => handleComment(post.id)}
+              >
+                <Feather name="message-circle" size={20} color="#999" />
+                <Text style={styles.actionText}>{post.commentsCount}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => handleVerify(post.id)}
+              >
+                <MaterialIcons name="verified-user" size={20} color="#999" />
+                <Text style={styles.actionText}>Verify</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.actionButton}>
+                <Feather name="share" size={20} color="#999" />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </View>
-    </View>
-  </View>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 
 const styles = StyleSheet.create({
-  root: {
-    
-    paddingTop: 45,
-    paddingLeft: 0,
-    paddingBottom: 45,
-    paddingRight: 0,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    rowGap: 20,
-    columnGap: 20,
-    backgroundColor: 'rgba(0, 0, 0, 1)',
+  container: {
+    flex: 1,
+    backgroundColor: '#000000',
   },
-  frame106: {
+  header: {
     flexDirection: 'row',
-    paddingTop: 0,
-    paddingLeft: 10,
-    paddingBottom: 0,
-    paddingRight: 10,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     justifyContent: 'space-between',
-    alignItems: 'center',
-    alignSelf: 'stretch',
   },
-  frame1321321697: {
+  profileAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1c1c1c',
+  },
+  headerTitle: {
+    color: '#ffffff',
+    fontSize: 20,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+  },
+  searchButton: {
+    padding: 8,
+  },
+  searchContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  searchWrapper: {
     flexDirection: 'row',
-    width: 47.559,
-    height: 49,
     alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    borderBottomLeftRadius: 46,
-    borderBottomRightRadius: 46,
-    borderTopLeftRadius: 46,
-    borderTopRightRadius: 46,
-    backgroundColor: 'rgba(28, 28, 28, 1)',
+    backgroundColor: '#1a1a1a',
+    borderRadius: 25,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  community: {
-    color: 'rgba(255, 255, 255, 1)',
-    fontFamily: 'Aeonik-Regular, Arial, sans-serif',
-    fontSize: 18,
-    fontStyle: 'normal',
-    fontWeight: '400',
-    lineHeight: 17.365,
-    letterSpacing: 0.18,
+  searchInput: {
+    flex: 1,
+    color: '#ffffff',
+    fontSize: 16,
+    marginLeft: 12,
   },
-  frame1321321698: {
+  postsContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  postCard: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 16,
+    padding: 16,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  postHeader: {
     flexDirection: 'row',
-    width: 47.559,
-    height: 49,
-    justifyContent: 'center',
-    alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    borderBottomLeftRadius: 46,
-    borderBottomRightRadius: 46,
-    borderTopLeftRadius: 46,
-    borderTopRightRadius: 46,
-    backgroundColor: 'rgba(28, 28, 28, 1)',
+    alignItems: 'flex-start',
+    marginBottom: 12,
   },
-  vanguardPreparesToPermitUSClientsAssessToThirdPartyCryptoEtFs: {
-    alignSelf: 'stretch',
-    color: 'rgba(217, 217, 217, 1)',
-    fontFamily: 'Aeonik-Regular, Arial, sans-serif',
-    fontSize: 15,
-    fontStyle: 'normal',
+  userAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#2a2a2a',
+  },
+  userInfo: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  usernameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  username: {
+    color: '#ffffff',
+    fontSize: 16,
     fontWeight: '700',
+    marginRight: 6,
   },
-  frame99: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    rowGap: -1,
-    columnGap: -1,
-    alignSelf: 'stretch',
+  userDescription: {
+    color: '#999999',
+    fontSize: 14,
+    marginTop: 2,
   },
-  frame63: {
-    paddingTop: 0,
-    paddingLeft: 10,
-    paddingBottom: 0,
-    paddingRight: 10,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    rowGap: 10,
-    columnGap: 10,
-    alignSelf: 'stretch',
+  timeAgo: {
+    color: '#666666',
+    fontSize: 13,
+    marginTop: 4,
   },
-  frame56: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    rowGap: 30.667,
-    columnGap: 30.667,
-    alignSelf: 'stretch',
+  postContent: {
+    color: '#ffffff',
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 16,
   },
-  frame52: {
-    flexDirection: 'row',
-    paddingTop: 18,
-    paddingLeft: 0,
-    paddingBottom: 18,
-    paddingRight: 0,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    rowGap: 22.667,
-    columnGap: 22.667,
-    alignSelf: 'stretch',
-    borderTopColor: 'rgba(49, 54, 56, 1)',
-    borderTopWidth: 0.667,
-    borderBottomColor: 'rgba(49, 54, 56, 1)',
-    borderBottomWidth: 0.667,
+  postImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    marginBottom: 16,
+    backgroundColor: '#2a2a2a',
   },
-  frame50: {
-    paddingTop: 3.333,
-    paddingLeft: 0,
-    paddingBottom: 3.333,
-    paddingRight: 0,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    rowGap: 9.333,
-    columnGap: 9.333,
-    flexGrow: 1,
-    flexShrink: 0,
-    flexBasis: 0,
-  },
-  frame49: {
+  actionBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    rowGap: 8.667,
-    columnGap: 8.667,
-  },
-  frame48: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    rowGap: -9.333,
-    columnGap: -9.333,
-  },
-  frame1321321699: {
-    flexDirection: 'row',
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 1)',
-    backgroundColor: 'rgba(41, 41, 41, 1)',
-  },
-  frame1321321700: {
-    flexDirection: 'row',
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 1)',
-    backgroundColor: 'rgba(41, 41, 41, 1)',
-  },
-  frame1321321701: {
-    flexDirection: 'row',
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 1)',
-    backgroundColor: 'rgba(41, 41, 41, 1)',
-  },
-  $6HoursAgo: {
-    color: 'rgba(112, 118, 122, 1)',
-    fontFamily: 'Aeonik-Regular, Arial, sans-serif',
-    fontSize: 13.017,
-    fontStyle: 'normal',
-    fontWeight: '400',
-  },
-  frame13213216992: {
-    flexDirection: 'row',
-    width: 6,
-    height: 6,
-    alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    aspectRatio: 1,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 1)',
-    backgroundColor: 'rgba(41, 41, 41, 1)',
-  },
-  news: {
-    color: 'rgba(112, 118, 122, 1)',
-    fontFamily: 'Aeonik-Regular, Arial, sans-serif',
-    fontSize: 13.017,
-    fontStyle: 'normal',
-    fontWeight: '400',
-  },
-  frame13213217002: {
-    flexDirection: 'row',
-    width: 6,
-    height: 6,
-    alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    aspectRatio: 1,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 1)',
-    backgroundColor: 'rgba(41, 41, 41, 1)',
-  },
-  $11KPosts: {
-    color: 'rgba(112, 118, 122, 1)',
-    fontFamily: 'Aeonik-Regular, Arial, sans-serif',
-    fontSize: 13.017,
-    fontStyle: 'normal',
-    fontWeight: '400',
-  },
-  vanguardPreparesToPermitUSClientsAssessToThirdPartyCryptoEtFs2: {
-    alignSelf: 'stretch',
-    color: 'rgba(217, 217, 217, 1)',
-    fontFamily: 'Aeonik-Regular, Arial, sans-serif',
-    fontSize: 15,
-    fontStyle: 'normal',
-    fontWeight: '700',
-  },
-  frame64: {
-    paddingTop: 0,
-    paddingLeft: 10,
-    paddingBottom: 0,
-    paddingRight: 10,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    rowGap: 10,
-    columnGap: 10,
-    alignSelf: 'stretch',
-  },
-  frame562: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    rowGap: 30.667,
-    columnGap: 30.667,
-    alignSelf: 'stretch',
-  },
-  frame522: {
-    flexDirection: 'row',
-    paddingTop: 18,
-    paddingLeft: 0,
-    paddingBottom: 18,
-    paddingRight: 0,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    rowGap: 22.667,
-    columnGap: 22.667,
-    alignSelf: 'stretch',
-    borderTopColor: 'rgba(49, 54, 56, 1)',
-    borderTopWidth: 0.667,
-    borderBottomColor: 'rgba(49, 54, 56, 1)',
-    borderBottomWidth: 0.667,
-  },
-  frame502: {
-    height: 98,
-    paddingTop: 3.333,
-    paddingLeft: 0,
-    paddingBottom: 3.333,
-    paddingRight: 0,
-    flexDirection: 'column',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    flexGrow: 1,
-    flexShrink: 0,
-    flexBasis: 0,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#333',
   },
-  frame503: {
+  actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    rowGap: 8.667,
-    columnGap: 8.667,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    backgroundColor: '#2a2a2a',
   },
-  frame482: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    rowGap: -9.333,
-    columnGap: -9.333,
+  actionText: {
+    color: '#999999',
+    fontSize: 14,
+    marginLeft: 6,
+    fontWeight: '500',
   },
-  frame13213216993: {
-    flexDirection: 'row',
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 1)',
-    backgroundColor: 'rgba(41, 41, 41, 1)',
+  activeUpvote: {
+    backgroundColor: 'rgba(0, 200, 81, 0.1)',
   },
-  frame13213217003: {
-    flexDirection: 'row',
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 1)',
-    backgroundColor: 'rgba(41, 41, 41, 1)',
+  activeUpvoteText: {
+    color: '#00C851',
   },
-  frame13213217012: {
-    flexDirection: 'row',
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 1)',
-    backgroundColor: 'rgba(41, 41, 41, 1)',
+  activeDownvote: {
+    backgroundColor: 'rgba(255, 68, 68, 0.1)',
   },
-  $6HoursAgo2: {
-    color: 'rgba(112, 118, 122, 1)',
-    fontFamily: 'Aeonik-Regular, Arial, sans-serif',
-    fontSize: 13.017,
-    fontStyle: 'normal',
-    fontWeight: '400',
-  },
-  frame13213216994: {
-    flexDirection: 'row',
-    width: 6,
-    height: 6,
-    alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    aspectRatio: 1,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 1)',
-    backgroundColor: 'rgba(41, 41, 41, 1)',
-  },
-  news2: {
-    color: 'rgba(112, 118, 122, 1)',
-    fontFamily: 'Aeonik-Regular, Arial, sans-serif',
-    fontSize: 13.017,
-    fontStyle: 'normal',
-    fontWeight: '400',
-  },
-  frame13213217004: {
-    flexDirection: 'row',
-    width: 6,
-    height: 6,
-    alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    aspectRatio: 1,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 1)',
-    backgroundColor: 'rgba(41, 41, 41, 1)',
-  },
-  $11KPosts2: {
-    color: 'rgba(112, 118, 122, 1)',
-    fontFamily: 'Aeonik-Regular, Arial, sans-serif',
-    fontSize: 13.017,
-    fontStyle: 'normal',
-    fontWeight: '400',
-  },
-  rectangle6: {
-    width: 78.667,
-    height: 78.667,
-    borderBottomLeftRadius: 11.333,
-    borderBottomRightRadius: 11.333,
-    borderTopLeftRadius: 11.333,
-    borderTopRightRadius: 11.333,
-    backgroundColor: 'rgba(41, 41, 41, 1)',
+  activeDownvoteText: {
+    color: '#FF4444',
   },
 });
 

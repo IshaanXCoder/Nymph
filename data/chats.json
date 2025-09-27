@@ -45,7 +45,7 @@
       "messages": [
         {
           "id": "201",
-          "sender": "vitalik.eth",
+          "sender": "blocsoc.eth",
           "content": "Layer 2 scaling is progressing well",
           "timestamp": "10:20 AM",
           "isOwn": false

@@ -1,5 +1,6 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { ChatIcon, HomeIcon, SearchIcon } from "../../components/CustomTabIcon";
+import { ChatIcon, SearchIcon } from "../../components/CustomTabIcon";
 
 export default function TabLayout() {
   return (
@@ -16,29 +17,29 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <HomeIcon size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="chat"
         options={{
-          title: "Chat",
+          title: "Community",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <ChatIcon size={size} color={color} />
           ),
         }}
       />
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Research",
+            headerShown: false,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="library-outline" size={size} color={color} />
+            ),
+          }}
+        />
       <Tabs.Screen
         name="search"
         options={{
-          title: "Search",
+          title: "Private",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <SearchIcon size={size} color={color} />

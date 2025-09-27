@@ -2,9 +2,9 @@
   "users": [
     {
       "id": "1",
-      "username": "vitalik.eth",
+      "username": "blocsoc.eth",
       "displayName": "Vitalik Buterin",
-      "description": "Ethereum co-founder",
+      "description": "Someone at Blocsoc",
       "profile": "https://cryptologos.cc/logos/ethereum-eth-logo.png",
       "followers": 2500000,
       "following": 150,

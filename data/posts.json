@@ -2,8 +2,8 @@
   "posts": [
     {
       "id": "1",
-      "username": "vitalik.eth",
-      "userDescription": "Ethereum co-founder",
+      "username": "blocsoc.eth",
+      "userDescription": "Someone at Blocsoc",
       "timeAgo": "3h",
       "content": "Layer 2 scaling solutions will play a huge role in mass adoption of blockchain technology.",
       "profile": "https://cryptologos.cc/logos/ethereum-eth-logo.png",
