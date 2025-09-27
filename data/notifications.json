@@ -1,0 +1,104 @@
+{
+  "notifications": [
+    {
+      "id": "1",
+      "type": "like",
+      "username": "satoshi.n",
+      "userProfile": "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
+      "content": "liked your post about Layer 2 scaling",
+      "timeAgo": "5m",
+      "isRead": false,
+      "postId": "1"
+    },
+    {
+      "id": "2",
+      "type": "comment",
+      "username": "cz_binance",
+      "userProfile": "https://cryptologos.cc/logos/binance-coin-bnb-logo.png",
+      "content": "commented on your post",
+      "timeAgo": "10m",
+      "isRead": false,
+      "postId": "1"
+    },
+    {
+      "id": "3",
+      "type": "follow",
+      "username": "elon.musk",
+      "userProfile": "https://logos-world.net/wp-content/uploads/2020/04/Tesla-Logo.png",
+      "content": "started following you",
+      "timeAgo": "1h",
+      "isRead": true,
+      "postId": null
+    },
+    {
+      "id": "4",
+      "type": "mention",
+      "username": "paradigm.eth",
+      "userProfile": "https://logos-world.net/wp-content/uploads/2021/08/Paradigm-Logo.png",
+      "content": "mentioned you in a post about DeFi protocols",
+      "timeAgo": "2h",
+      "isRead": false,
+      "postId": "3"
+    },
+    {
+      "id": "5",
+      "type": "like",
+      "username": "google.eth",
+      "userProfile": "https://logos-world.net/wp-content/uploads/2020/09/Google-Logo.png",
+      "content": "liked your post about quantum computing",
+      "timeAgo": "3h",
+      "isRead": true,
+      "postId": "4"
+    },
+    {
+      "id": "6",
+      "type": "share",
+      "username": "microsoft.eth",
+      "userProfile": "https://logos-world.net/wp-content/uploads/2020/09/Microsoft-Logo.png",
+      "content": "shared your post about enterprise adoption",
+      "timeAgo": "4h",
+      "isRead": false,
+      "postId": "5"
+    },
+    {
+      "id": "7",
+      "type": "follow",
+      "username": "apple.eth",
+      "userProfile": "https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png",
+      "content": "started following you",
+      "timeAgo": "5h",
+      "isRead": true,
+      "postId": null
+    },
+    {
+      "id": "8",
+      "type": "comment",
+      "username": "coinbase.eth",
+      "userProfile": "https://logos-world.net/wp-content/uploads/2021/08/Coinbase-Logo.png",
+      "content": "commented on your post about regulatory clarity",
+      "timeAgo": "6h",
+      "isRead": false,
+      "postId": "7"
+    },
+    {
+      "id": "9",
+      "type": "like",
+      "username": "tesla.eth",
+      "userProfile": "https://logos-world.net/wp-content/uploads/2020/04/Tesla-Logo.png",
+      "content": "liked your post about autonomous vehicles",
+      "timeAgo": "7h",
+      "isRead": true,
+      "postId": "8"
+    },
+    {
+      "id": "10",
+      "type": "mention",
+      "username": "openai.eth",
+      "userProfile": "https://logos-world.net/wp-content/uploads/2023/01/OpenAI-Logo.png",
+      "content": "mentioned you in a post about AI alignment",
+      "timeAgo": "8h",
+      "isRead": false,
+      "postId": "9"
+    }
+  ]
+}

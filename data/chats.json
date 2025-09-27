@@ -1,0 +1,215 @@
+{
+  "chats": [
+    {
+      "id": "1",
+      "name": "Paradigm Team",
+      "description": "Crypto investment discussions",
+      "lastMessage": "The new DeFi protocol looks promising",
+      "timeAgo": "2m",
+      "unreadCount": 3,
+      "color": "#FF6B6B",
+      "profile": "https://logos-world.net/wp-content/uploads/2021/08/Paradigm-Logo.png",
+      "messages": [
+        {
+          "id": "101",
+          "sender": "paradigm.eth",
+          "content": "What do you think about the new DeFi protocol?",
+          "timestamp": "10:30 AM",
+          "isOwn": false
+        },
+        {
+          "id": "102",
+          "sender": "You",
+          "content": "Looks interesting, but I need to review the tokenomics",
+          "timestamp": "10:32 AM",
+          "isOwn": true
+        },
+        {
+          "id": "103",
+          "sender": "paradigm.eth",
+          "content": "The new DeFi protocol looks promising",
+          "timestamp": "10:35 AM",
+          "isOwn": false
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Ethereum Devs",
+      "description": "Technical discussions",
+      "lastMessage": "Layer 2 scaling is progressing well",
+      "timeAgo": "15m",
+      "unreadCount": 0,
+      "color": "#4ECDC4",
+      "profile": "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+      "messages": [
+        {
+          "id": "201",
+          "sender": "vitalik.eth",
+          "content": "Layer 2 scaling is progressing well",
+          "timestamp": "10:20 AM",
+          "isOwn": false
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "AI Research",
+      "description": "AI and blockchain intersection",
+      "lastMessage": "Quantum computing will change everything",
+      "timeAgo": "1h",
+      "unreadCount": 7,
+      "color": "#45B7D1",
+      "profile": "https://logos-world.net/wp-content/uploads/2023/01/OpenAI-Logo.png",
+      "messages": [
+        {
+          "id": "301",
+          "sender": "openai.eth",
+          "content": "Quantum computing will change everything",
+          "timestamp": "9:30 AM",
+          "isOwn": false
+        },
+        {
+          "id": "302",
+          "sender": "You",
+          "content": "How will it affect current encryption?",
+          "timestamp": "9:32 AM",
+          "isOwn": true
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Tesla Team",
+      "description": "Autonomous vehicles discussion",
+      "lastMessage": "Data security is our top priority",
+      "timeAgo": "2h",
+      "unreadCount": 1,
+      "color": "#96CEB4",
+      "profile": "https://logos-world.net/wp-content/uploads/2020/04/Tesla-Logo.png",
+      "messages": [
+        {
+          "id": "401",
+          "sender": "tesla.eth",
+          "content": "Data security is our top priority",
+          "timestamp": "8:30 AM",
+          "isOwn": false
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Google Cloud",
+      "description": "Cloud infrastructure talks",
+      "lastMessage": "Blockchain services are expanding",
+      "timeAgo": "3h",
+      "unreadCount": 0,
+      "color": "#FFEAA7",
+      "profile": "https://logos-world.net/wp-content/uploads/2020/09/Google-Logo.png",
+      "messages": [
+        {
+          "id": "501",
+          "sender": "google.eth",
+          "content": "Blockchain services are expanding",
+          "timestamp": "7:30 AM",
+          "isOwn": false
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Microsoft Azure",
+      "description": "Enterprise blockchain solutions",
+      "lastMessage": "Enterprise adoption is accelerating",
+      "timeAgo": "4h",
+      "unreadCount": 2,
+      "color": "#DDA0DD",
+      "profile": "https://logos-world.net/wp-content/uploads/2020/09/Microsoft-Logo.png",
+      "messages": [
+        {
+          "id": "601",
+          "sender": "microsoft.eth",
+          "content": "Enterprise adoption is accelerating",
+          "timestamp": "6:30 AM",
+          "isOwn": false
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Apple Privacy",
+      "description": "Privacy and security focus",
+      "lastMessage": "Privacy-first approach is key",
+      "timeAgo": "5h",
+      "unreadCount": 0,
+      "color": "#98D8C8",
+      "profile": "https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png",
+      "messages": [
+        {
+          "id": "701",
+          "sender": "apple.eth",
+          "content": "Privacy-first approach is key",
+          "timestamp": "5:30 AM",
+          "isOwn": false
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "name": "Coinbase Legal",
+      "description": "Regulatory discussions",
+      "lastMessage": "Working with policymakers on framework",
+      "timeAgo": "6h",
+      "unreadCount": 4,
+      "color": "#F7DC6F",
+      "profile": "https://logos-world.net/wp-content/uploads/2021/08/Coinbase-Logo.png",
+      "messages": [
+        {
+          "id": "801",
+          "sender": "coinbase.eth",
+          "content": "Working with policymakers on framework",
+          "timestamp": "4:30 AM",
+          "isOwn": false
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "name": "GitHub Open Source",
+      "description": "Open source development",
+      "lastMessage": "Web3 projects embracing open development",
+      "timeAgo": "7h",
+      "unreadCount": 0,
+      "color": "#BB8FCE",
+      "profile": "https://logos-world.net/wp-content/uploads/2020/09/GitHub-Logo.png",
+      "messages": [
+        {
+          "id": "901",
+          "sender": "github.eth",
+          "content": "Web3 projects embracing open development",
+          "timestamp": "3:30 AM",
+          "isOwn": false
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "name": "DeFi Protocol",
+      "description": "Decentralized finance discussions",
+      "lastMessage": "New yield farming opportunities",
+      "timeAgo": "8h",
+      "unreadCount": 12,
+      "color": "#85C1E9",
+      "profile": "https://cryptologos.cc/logos/uniswap-uni-logo.png",
+      "messages": [
+        {
+          "id": "1001",
+          "sender": "uniswap.eth",
+          "content": "New yield farming opportunities",
+          "timestamp": "2:30 AM",
+          "isOwn": false
+        }
+      ]
+    }
+  ]
+}

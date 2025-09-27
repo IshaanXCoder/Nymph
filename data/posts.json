@@ -1,0 +1,221 @@
+{
+  "posts": [
+    {
+      "id": "1",
+      "username": "vitalik.eth",
+      "userDescription": "Ethereum co-founder",
+      "timeAgo": "3h",
+      "content": "Layer 2 scaling solutions will play a huge role in mass adoption of blockchain technology.",
+      "profile": "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+      "image": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&h=300&fit=crop",
+      "comments": [
+        {
+          "id": "101",
+          "username": "satoshi.n",
+          "userDescription": "Bitcoin creator (anonymous)",
+          "timeAgo": "2h",
+          "content": "Agreed. Without scaling, decentralized apps can't reach billions of people.",
+          "profile": "https://cryptologos.cc/logos/bitcoin-btc-logo.png"
+        },
+        {
+          "id": "102",
+          "username": "cz_binance",
+          "userDescription": "Founder of Binance",
+          "timeAgo": "1h",
+          "content": "L2s are powerful, but we also need user-friendly wallets and better onboarding.",
+          "profile": "https://cryptologos.cc/logos/binance-coin-bnb-logo.png"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "username": "naval.eth",
+      "userDescription": "Entrepreneur & investor",
+      "timeAgo": "5h",
+      "content": "The future belongs to those who can build and deploy AI agents that work for them 24/7.",
+      "profile": "https://logos-world.net/wp-content/uploads/2020/04/Tesla-Logo.png",
+      "comments": [
+        {
+          "id": "201",
+          "username": "elon.musk",
+          "userDescription": "CEO of Tesla & SpaceX",
+          "timeAgo": "4h",
+          "content": "AI agents will be the new workforce. Humans will focus on creativity and strategy.",
+          "profile": "https://logos-world.net/wp-content/uploads/2020/04/Tesla-Logo.png"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "username": "paradigm.eth",
+      "userDescription": "Crypto investment firm",
+      "timeAgo": "7h",
+      "content": "MEV (Maximal Extractable Value) is becoming more sophisticated. We need better solutions to protect users.",
+      "profile": "https://logos-world.net/wp-content/uploads/2021/08/Paradigm-Logo.png",
+      "image": "https://images.unsplash.com/photo-1639322537504-6427a16b0a28?w=400&h=300&fit=crop",
+      "comments": [
+        {
+          "id": "301",
+          "username": "uniswap.eth",
+          "userDescription": "Decentralized exchange",
+          "timeAgo": "6h",
+          "content": "Flashbots and private mempools are helping, but we need more research in this area.",
+          "profile": "https://cryptologos.cc/logos/uniswap-uni-logo.png"
+        },
+        {
+          "id": "302",
+          "username": "aave.eth",
+          "userDescription": "DeFi lending protocol",
+          "timeAgo": "5h",
+          "content": "MEV protection should be built into the protocol level, not just the application level.",
+          "profile": "https://cryptologos.cc/logos/aave-aave-logo.png"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "username": "google.eth",
+      "userDescription": "Tech giant",
+      "timeAgo": "2h",
+      "content": "Quantum computing will break current encryption. We need to prepare for post-quantum cryptography.",
+      "profile": "https://logos-world.net/wp-content/uploads/2020/09/Google-Logo.png",
+      "comments": [
+        {
+          "id": "401",
+          "username": "ibm.eth",
+          "userDescription": "Technology corporation",
+          "timeAgo": "1h",
+          "content": "We're already working on quantum-resistant algorithms. The transition needs to start now.",
+          "profile": "https://logos-world.net/wp-content/uploads/2020/09/IBM-Logo.png"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "username": "microsoft.eth",
+      "userDescription": "Software corporation",
+      "timeAgo": "4h",
+      "content": "Azure is now supporting more blockchain networks. Enterprise adoption is accelerating.",
+      "profile": "https://logos-world.net/wp-content/uploads/2020/09/Microsoft-Logo.png",
+      "image": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=300&fit=crop",
+      "comments": [
+        {
+          "id": "501",
+          "username": "amazon.eth",
+          "userDescription": "Cloud computing giant",
+          "timeAgo": "3h",
+          "content": "AWS is also expanding blockchain services. The cloud infrastructure race is heating up.",
+          "profile": "https://logos-world.net/wp-content/uploads/2020/09/Amazon-Logo.png"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "username": "apple.eth",
+      "userDescription": "Technology company",
+      "timeAgo": "6h",
+      "content": "Privacy-first approach to digital identity will be crucial for Web3 adoption.",
+      "profile": "https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png",
+      "comments": [
+        {
+          "id": "601",
+          "username": "privacy.eth",
+          "userDescription": "Privacy advocate",
+          "timeAgo": "5h",
+          "content": "Apple's approach to privacy could be a model for Web3 identity solutions.",
+          "profile": "https://cryptologos.cc/logos/monero-xmr-logo.png"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "username": "coinbase.eth",
+      "userDescription": "Cryptocurrency exchange",
+      "timeAgo": "1h",
+      "content": "Regulatory clarity is coming. We're working with policymakers to create a framework that protects users while fostering innovation.",
+      "profile": "https://logos-world.net/wp-content/uploads/2021/08/Coinbase-Logo.png",
+      "image": "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=400&h=300&fit=crop",
+      "comments": [
+        {
+          "id": "701",
+          "username": "sec.eth",
+          "userDescription": "Securities regulator",
+          "timeAgo": "30m",
+          "content": "We're committed to protecting investors while allowing innovation to flourish.",
+          "profile": "https://logos-world.net/wp-content/uploads/2020/09/US-Government-Logo.png"
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "username": "tesla.eth",
+      "userDescription": "Electric vehicle company",
+      "timeAgo": "8h",
+      "content": "Autonomous vehicles will generate massive amounts of data. Blockchain can help secure and monetize this data.",
+      "profile": "https://logos-world.net/wp-content/uploads/2020/04/Tesla-Logo.png",
+      "comments": [
+        {
+          "id": "801",
+          "username": "waymo.eth",
+          "userDescription": "Autonomous driving company",
+          "timeAgo": "7h",
+          "content": "Data privacy and security are paramount. Blockchain could be part of the solution.",
+          "profile": "https://logos-world.net/wp-content/uploads/2020/09/Waymo-Logo.png"
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "username": "openai.eth",
+      "userDescription": "AI research company",
+      "timeAgo": "9h",
+      "content": "AI models are becoming more capable, but we need to ensure they're aligned with human values.",
+      "profile": "https://logos-world.net/wp-content/uploads/2023/01/OpenAI-Logo.png",
+      "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop",
+      "comments": [
+        {
+          "id": "901",
+          "username": "anthropic.eth",
+          "userDescription": "AI safety company",
+          "timeAgo": "8h",
+          "content": "Constitutional AI is one approach to alignment. We need multiple strategies.",
+          "profile": "https://logos-world.net/wp-content/uploads/2023/01/Anthropic-Logo.png"
+        },
+        {
+          "id": "902",
+          "username": "deepmind.eth",
+          "userDescription": "AI research lab",
+          "timeAgo": "7h",
+          "content": "Safety research is crucial. We can't afford to get AI alignment wrong.",
+          "profile": "https://logos-world.net/wp-content/uploads/2020/09/DeepMind-Logo.png"
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "username": "github.eth",
+      "userDescription": "Code hosting platform",
+      "timeAgo": "10h",
+      "content": "Open source is the foundation of Web3. We're seeing more blockchain projects embracing open development.",
+      "profile": "https://logos-world.net/wp-content/uploads/2020/09/GitHub-Logo.png",
+      "comments": [
+        {
+          "id": "1001",
+          "username": "gitlab.eth",
+          "userDescription": "DevOps platform",
+          "timeAgo": "9h",
+          "content": "Collaboration tools for Web3 development are evolving rapidly.",
+          "profile": "https://logos-world.net/wp-content/uploads/2020/09/GitLab-Logo.png"
+        },
+        {
+          "id": "1002",
+          "username": "ethereum.eth",
+          "userDescription": "Blockchain platform",
+          "timeAgo": "8h",
+          "content": "The Ethereum ecosystem thrives on open source. It's in our DNA.",
+          "profile": "https://cryptologos.cc/logos/ethereum-eth-logo.png"
+        }
+      ]
+    }
+  ]
+}
