@@ -2,7 +2,7 @@ package com.nymph.example.services
 
 import android.content.Context
 import android.util.Log
-import io.clerk.android.Clerk
+// import io.clerk.android.Clerk // TODO: Add Clerk dependency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -16,8 +16,9 @@ class ClerkAuthService {
          */
         fun initialize(context: Context, publishableKey: String) {
             try {
-                Clerk.initialize(context, publishableKey)
-                Log.d(TAG, "Clerk initialized successfully")
+                // TODO: Initialize Clerk when dependency is added
+                // Clerk.initialize(context, publishableKey)
+                Log.d(TAG, "Clerk initialization skipped - dependency not available")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to initialize Clerk", e)
                 throw e

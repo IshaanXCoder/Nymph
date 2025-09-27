@@ -87,13 +87,13 @@ class MoproService {
                 Log.d(TAG, "Using zkey path: $zkeyPath")
                 Log.d(TAG, "Input JSON: $inputJson")
                 
-                val proof = generateCircomProof(zkeyPath, inputJson, ProofLib.ARKWORKS)
+                val moproResult = uniffi.mopro.generateCircomProof(zkeyPath, inputJson, ProofLib.Arkworks)
                 
                 Log.d(TAG, "Proof generated successfully")
                 
                 ProofResult(
                     success = true,
-                    proof = proof,
+                    proof = moproResult.proof,
                     error = null
                 )
             } catch (e: Exception) {
@@ -124,13 +124,13 @@ class MoproService {
                         error = "Failed to copy zkey file to internal storage"
                     )
                 
-                val isValid = verifyCircomProof(zkeyPath, proof, ProofLib.ARKWORKS)
+                val moproResult = uniffi.mopro.verifyCircomProof(zkeyPath, proof, ProofLib.Arkworks)
                 
-                Log.d(TAG, "Proof verification completed. Valid: $isValid")
+                Log.d(TAG, "Proof verification completed. Valid: ${moproResult.isValid}")
                 
                 VerificationResult(
                     success = true,
-                    isValid = isValid,
+                    isValid = moproResult.isValid,
                     error = null
                 )
             } catch (e: Exception) {

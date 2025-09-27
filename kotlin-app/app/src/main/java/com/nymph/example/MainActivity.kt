@@ -346,6 +346,7 @@ fun SettingsScreen(
     }
 }
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsCard(
     title: String,
