@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Microsoft OAuth Callback</title>
+    <meta charset="utf-8">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+    <meta name="referrer" content="no-referrer" />
+    <script>
+      (function(){
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const code = urlParams.get('code');
+          const error = urlParams.get('error');
+          const state = urlParams.get('state');
+          if (error) {
+            if (window.opener) {
+              window.opener.postMessage({ type: 'OAUTH_ERROR', error: error, error_description: urlParams.get('error_description') }, '*');
+            }
+            window.close();
+            return;
+          }
+          if (code) {
+            if (window.opener) {
+              window.opener.postMessage({ type: 'OAUTH_SUCCESS', code: code, state: state }, '*');
+            }
+            window.close();
+            return;
+          }
+          if (window.opener) {
+            window.opener.postMessage({ type: 'OAUTH_ERROR', error: 'no_code', error_description: 'No authorization code received' }, '*');
+          }
+          window.close();
+        } catch (err) {
+          if (window.opener) {
+            window.opener.postMessage({ type: 'OAUTH_ERROR', error: 'callback_error', error_description: err.message }, '*');
+          }
+          window.close();
+        }
+      })();
+    </script>
+</head>
+<body>
+    <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+        <h2>🔄 Processing Microsoft authentication...</h2>
+        <p>Please wait while we complete your sign-in.</p>
+        <p style="color: #666; font-size: 14px;">This window will close automatically.</p>
+    </div>
+</body>
+</html>
+
+

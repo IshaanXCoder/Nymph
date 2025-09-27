@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google OAuth Callback</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <script>
+        try {
+            // Extract authorization code from URL query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+            const state = urlParams.get('state');
+            
+            if (error) {
+                console.error('OAuth error:', error);
+                // Send error to parent window
+                if (window.opener) {
+                    window.opener.postMessage({
+                        type: 'OAUTH_ERROR',
+                        error: error,
+                        error_description: urlParams.get('error_description')
+                    }, '*');
+                }
+                window.close();
+            } else if (code) {
+                console.log('OAuth success, authorization code received');
+                // Send success to parent window
+                if (window.opener) {
+                    window.opener.postMessage({
+                        type: 'OAUTH_SUCCESS',
+                        code: code,
+                        state: state
+                    }, '*');
+                }
+                window.close();
+            } else {
+                console.error('No authorization code received');
+                // Send error to parent window
+                if (window.opener) {
+                    window.opener.postMessage({
+                        type: 'OAUTH_ERROR',
+                        error: 'no_code',
+                        error_description: 'No authorization code received'
+                    }, '*');
+                }
+                window.close();
+            }
+        } catch (err) {
+            console.error('OAuth callback error:', err);
+            if (window.opener) {
+                window.opener.postMessage({
+                    type: 'OAUTH_ERROR',
+                    error: 'callback_error',
+                    error_description: err.message
+                }, '*');
+            }
+            window.close();
+        }
+    </script>
+    <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+        <h2>🔄 Processing authentication...</h2>
+        <p>Please wait while we complete your sign-in.</p>
+        <p style="color: #666; font-size: 14px;">This window will close automatically.</p>
+    </div>
+</body>
+</html>
