@@ -1,14 +1,14 @@
-import { router } from "expo-router";
+import { AppKitButton } from "@reown/appkit-wagmi-react-native";
+import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
   StatusBar,
   StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+  View
 } from "react-native";
+import { useAccount } from "wagmi";
 
 const { width, height } = Dimensions.get("window");
 
@@ -18,6 +18,10 @@ export default function Index() {
   const backgroundAnim = useRef(new Animated.Value(0)).current;
   const buttonFadeAnim = useRef(new Animated.Value(0)).current;
   const textColorAnim = useRef(new Animated.Value(0)).current;
+  
+  // Wallet connection state
+  const { isConnected } = useAccount();
+  const router = useRouter();
 
   useEffect(() => {
     // Start the animation sequence after 1.5 seconds
@@ -27,6 +31,14 @@ export default function Index() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Monitor wallet connection status
+  useEffect(() => {
+    if (isConnected) {
+      // Navigate to home page (tabs) when wallet is connected
+      router.replace("/(tabs)");
+    }
+  }, [isConnected, router]);
 
   const startTransition = () => {
     // Start background and text color transition simultaneously
@@ -52,12 +64,6 @@ export default function Index() {
     });
   };
 
-  const handleConnectWallet = () => {
-    // This is where you'll integrate your wallet adapter
-    console.log("Connect wallet pressed");
-    // For now, navigate to tabs (replace with actual wallet connection)
-    router.push("/(tabs)");
-  };
 
   const interpolatedBackgroundColor = backgroundAnim.interpolate({
     inputRange: [0, 1],
@@ -115,13 +121,7 @@ export default function Index() {
               },
             ]}
           >
-            <TouchableOpacity
-              style={styles.connectButton}
-              onPress={handleConnectWallet}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.connectButtonText}>Connect Wallet</Text>
-            </TouchableOpacity>
+            <AppKitButton />
           </Animated.View>
         )}
       </View>

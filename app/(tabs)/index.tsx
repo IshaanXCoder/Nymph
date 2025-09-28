@@ -1,10 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
+  Alert,
+  Modal,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View
 } from "react-native";
@@ -22,6 +25,8 @@ const researchPapers = [
       { id: "2", color: "#4ECDC4", label: "B2" },
       { id: "3", color: "#45B7D1", label: "C3" },
     ],
+    authorInfo: null,
+    displayName: "Anonymous",
     upvotes: 142,
     downvotes: 8,
     comments: 23,
@@ -38,6 +43,8 @@ const researchPapers = [
       { id: "4", color: "#96CEB4", label: "D4" },
       { id: "5", color: "#FFEAA7", label: "E5" },
     ],
+    authorInfo: null,
+    displayName: "Anonymous",
     upvotes: 89,
     downvotes: 3,
     comments: 15,
@@ -53,6 +60,8 @@ const researchPapers = [
     authors: [
       { id: "6", color: "#DDA0DD", label: "F6" },
     ],
+    authorInfo: null,
+    displayName: "Anonymous",
     upvotes: 67,
     downvotes: 2,
     comments: 12,
@@ -70,6 +79,8 @@ const researchPapers = [
       { id: "8", color: "#BB8FCE", label: "H8" },
       { id: "9", color: "#85C1E9", label: "I9" },
     ],
+    authorInfo: null,
+    displayName: "Anonymous",
     upvotes: 234,
     downvotes: 12,
     comments: 45,
@@ -81,6 +92,10 @@ const researchPapers = [
 export default function Research() {
   const [searchQuery, setSearchQuery] = useState("");
   const [papers, setPapers] = useState(researchPapers);
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [postTitle, setPostTitle] = useState("");
+  const [postContent, setPostContent] = useState("");
+  const [postCategory, setPostCategory] = useState("");
 
   const handleVote = (paperId: string, voteType: 'up' | 'down') => {
     setPapers(prev => prev.map(paper => {
@@ -122,10 +137,63 @@ export default function Research() {
     console.log(`Verifying paper ${paperId}`);
   };
 
+  const handleCreatePost = () => {
+    console.log('➕ Create post button pressed');
+    setShowPostModal(true);
+  };
+
+
+
+
+  const handleSubmitPost = () => {
+    if (!postTitle.trim() || !postContent.trim()) {
+      Alert.alert("Error", "Please fill in both title and content");
+      return;
+    }
+
+    // Create new post
+    const newPost = {
+      id: (papers.length + 1).toString(),
+      title: postTitle,
+      category: postCategory || "General",
+      timeAgo: "Just now",
+      posts: "1 Post",
+      authors: [
+        { id: "user", color: "#2ECC71", label: "ME" },
+      ],
+      authorInfo: null,
+      displayName: "Anonymous",
+      upvotes: 0,
+      downvotes: 0,
+      comments: 0,
+      userVote: null as 'up' | 'down' | null,
+      hasImage: false,
+    };
+
+    // Add to papers list
+    setPapers(prev => [newPost, ...prev]);
+
+    // Reset form and close modal
+    setPostTitle("");
+    setPostContent("");
+    setPostCategory("");
+    setShowPostModal(false);
+
+    Alert.alert("Success", "Your post has been created!");
+  };
+
+  const handleCancelPost = () => {
+    setPostTitle("");
+    setPostContent("");
+    setPostCategory("");
+    setShowPostModal(false);
+  };
+
   const filteredPapers = papers.filter(paper => 
     paper.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     paper.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -169,6 +237,12 @@ export default function Research() {
                   <Text style={styles.category}>{paper.category}</Text>
                   <View style={styles.separator} />
                   <Text style={styles.posts}>{paper.posts}</Text>
+                  {paper.authorInfo && (
+                    <>
+                      <View style={styles.separator} />
+                      <Text style={styles.authorDisplay}>{paper.displayName}</Text>
+                    </>
+                  )}
                 </View>
               </View>
             </View>
@@ -181,9 +255,67 @@ export default function Research() {
       </ScrollView>
 
       {/* Floating Action Button */}
-      <TouchableOpacity style={styles.fab}>
+      <TouchableOpacity style={styles.fab} onPress={handleCreatePost}>
         <Ionicons name="add" size={28} color="white" />
       </TouchableOpacity>
+
+
+      {/* Post Creation Modal */}
+      <Modal
+        visible={showPostModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity onPress={handleCancelPost}>
+              <Text style={styles.cancelButton}>Cancel</Text>
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>Create Post</Text>
+            <TouchableOpacity onPress={handleSubmitPost}>
+              <Text style={styles.postButton}>Post</Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView style={styles.modalContent}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Title</Text>
+              <TextInput
+                style={styles.titleInput}
+                placeholder="Enter post title..."
+                placeholderTextColor="#666"
+                value={postTitle}
+                onChangeText={setPostTitle}
+                multiline
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Category</Text>
+              <TextInput
+                style={styles.categoryInput}
+                placeholder="e.g., DeFi, NFT, Research..."
+                placeholderTextColor="#666"
+                value={postCategory}
+                onChangeText={setPostCategory}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Content</Text>
+              <TextInput
+                style={styles.contentInput}
+                placeholder="Share your thoughts, research, or insights..."
+                placeholderTextColor="#666"
+                value={postContent}
+                onChangeText={setPostContent}
+                multiline
+                textAlignVertical="top"
+              />
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -298,6 +430,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '400',
   },
+  authorDisplay: {
+    color: '#2ECC71',
+    fontSize: 13,
+    fontWeight: '500',
+  },
   paperImage: {
     width: 78.667,
     height: 78.667,
@@ -312,7 +449,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#D1D5DB',
+    backgroundColor: '#2ECC71',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
@@ -323,5 +460,76 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.3,
     shadowRadius: 8,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  modalTitle: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  cancelButton: {
+    color: '#666',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  postButton: {
+    color: '#2ECC71',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modalContent: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  inputContainer: {
+    marginTop: 24,
+  },
+  inputLabel: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  titleInput: {
+    backgroundColor: '#1a1a1a',
+    color: '#ffffff',
+    fontSize: 16,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#333',
+    minHeight: 60,
+  },
+  categoryInput: {
+    backgroundColor: '#1a1a1a',
+    color: '#ffffff',
+    fontSize: 16,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#333',
+    height: 50,
+  },
+  contentInput: {
+    backgroundColor: '#1a1a1a',
+    color: '#ffffff',
+    fontSize: 16,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#333',
+    minHeight: 200,
   },
 });

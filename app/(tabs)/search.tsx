@@ -256,6 +256,7 @@ export default function Search() {
           </TouchableOpacity>
         </View>
       </View>
+
     </SafeAreaView>
   );
 }
