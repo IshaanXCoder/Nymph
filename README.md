@@ -18,7 +18,7 @@ People inside organizations often cannot speak freely about internal issues and 
 - Generate **zk proofs** to verify organizational membership without revealing identity using the ENS of the user. 
 - Post anonymously as eg. "Someone from blocsoc.eth says..."
 
---image 1 aaygi yaha 
+![alt text](image.png)
 
 #### 🍪 **zkCookies - Privacy-Preserving Interest Tracking (POC)**
 - **Learning without tracking** - AI classifies content interests locally
@@ -26,7 +26,7 @@ People inside organizations often cannot speak freely about internal issues and 
 - **Interest-based reputation** system highlighting anonymous topic contributors
 - Users control their data and can prove interest levels for targeted content
 
--- image 2 aygi yaha
+![alt text](image-1.png)
 
 ### Platform Structure
 
